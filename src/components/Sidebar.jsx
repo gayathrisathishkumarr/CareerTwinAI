@@ -48,15 +48,6 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </div>
-
-      {/* Sidebar Footer Profile */}
-      <div className="side-foot-profile">
-        <div className="av">R</div>
-        <div className="profile-info">
-          <b>Rounith R.</b>
-          <span>Student</span>
-        </div>
-      </div>
     </aside>
   )
 }
