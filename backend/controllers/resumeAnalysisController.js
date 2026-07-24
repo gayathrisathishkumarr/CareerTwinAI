@@ -17,7 +17,7 @@ export const analyzeResume = async (req, res, next) => {
       });
     }
 
-    const structuredProfile = ResumeAnalysisService.analyzeText(latestResume.extracted_text);
+    const structuredProfile = await ResumeAnalysisService.analyzeText(latestResume.extracted_text);
 
     res.status(200).json({
       status: 'success',
