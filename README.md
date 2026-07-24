@@ -13,6 +13,8 @@ A dynamic, AI-powered **digital twin** of a professional identity — replacing 
 * **Team Members:**
   * **Gayathri Sathish Kumar** (Frontend & Integration Developer)
   * **Rounith Rathesh** (AI Systems & Project Architect)
+  * **Rithvika B** (Backend Developer)
+  * **Bhavna Sarathy** (ML Developer)
 
 ---
 
