@@ -1,6 +1,7 @@
 import express from 'express';
 import upload from '../middleware/uploadMiddleware.js';
 import { uploadResume, getLatestResume } from '../controllers/resumeController.js';
+import { analyzeResume } from '../controllers/resumeAnalysisController.js';
 
 const router = express.Router();
 
@@ -50,5 +51,8 @@ router.post('/upload', handleUpload, uploadResume);
 
 // GET /api/resume/latest
 router.get('/latest', getLatestResume);
+
+// GET /api/resume/analyze
+router.get('/analyze', analyzeResume);
 
 export default router;
