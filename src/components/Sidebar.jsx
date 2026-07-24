@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import React from 'react'
+import { NavLink } from 'react-router-dom'
 import { useRole } from '../context/RoleContext.jsx'
 
 const proNav = [
@@ -22,16 +22,8 @@ const recNav = [
 ]
 
 export default function Sidebar() {
-  const { role, setRole } = useRole()
+  const { role } = useRole()
   const nav = role === 'pro' ? proNav : recNav
-  const navigate = useNavigate()
-  const [dropdownOpen, setDropdownOpen] = useState(false)
-
-  function switchRole(next) {
-    setRole(next)
-    setDropdownOpen(false)
-    navigate(next === 'pro' ? '/' : '/discover')
-  }
 
   return (
     <aside className="side">
@@ -55,40 +47,6 @@ export default function Sidebar() {
             {item.label}
           </NavLink>
         ))}
-      </div>
-
-
-
-      {/* Sidebar Footer Profile */}
-      <div className="side-foot-profile" onClick={() => setDropdownOpen(!dropdownOpen)}>
-        <div className="av">R</div>
-        <div className="profile-info">
-          <b>Rounith R.</b>
-          <span>Student</span>
-        </div>
-        <i className={`ti ti-chevron-${dropdownOpen ? 'up' : 'down'} chevron`} />
-
-        {dropdownOpen && (
-          <div className="sidebar-dropdown">
-            <div className="dropdown-header">Account Mode</div>
-            <button 
-              className={`dropdown-item ${role === 'pro' ? 'active' : ''}`}
-              onClick={() => switchRole('pro')}
-            >
-              <i className="ti ti-user" /> Professional Mode
-            </button>
-            <button 
-              className={`dropdown-item ${role === 'rec' ? 'active' : ''}`}
-              onClick={() => switchRole('rec')}
-            >
-              <i className="ti ti-briefcase" /> Recruiter Mode
-            </button>
-            <hr />
-            <button className="dropdown-item" onClick={() => navigate('/settings')}>
-              <i className="ti ti-settings" /> Settings
-            </button>
-          </div>
-        )}
       </div>
     </aside>
   )

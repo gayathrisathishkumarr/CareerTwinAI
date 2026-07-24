@@ -10,7 +10,7 @@ A dynamic, AI-powered **digital twin** of a professional identity — replacing 
 ---
 
 ## 👥 Team Details
-* **Team Name:** INVICTUS
+* **Team Name:** Invictus
 * **Track:** AI for Education & Career Development
 * **Team Members:**
   * **Gayathri Sathish Kumar**
