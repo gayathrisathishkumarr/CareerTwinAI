@@ -21,7 +21,7 @@ export default function Chat() {
       </div>
 
       <div className="chat-wrap">
-        <ChatPanel />
+        <ChatPanel key={role} />
 
         <div className="stack">
           <div className="card pad aside-card">

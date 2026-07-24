@@ -40,7 +40,7 @@ def build(out_path):
         """INSERT INTO professionals
            (name, initials, role, location, years, twin_iq, readiness, target_role, verified)
            VALUES (?,?,?,?,?,?,?,?,1)""",
-        ("Aanya Rao", "AR", "Software engineer", "San Francisco", 5, 82, 78, "Senior ML Engineer"),
+        ("Rounith R.", "R", "Student", "Chennai", 1, 78, 85, "Software Developer"),
     )
     pid = c.lastrowid
 
