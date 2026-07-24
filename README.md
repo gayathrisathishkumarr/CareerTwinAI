@@ -11,10 +11,10 @@ A dynamic, AI-powered **digital twin** of a professional identity — replacing 
 * **Team Name:** CareerTwin Builders
 * **Track:** Web & AI / Professional Identity
 * **Team Members:**
-  * **Gayathri Sathish Kumar** (Frontend & Integration Developer)
-  * **Rounith Rathesh** (AI Systems & Project Architect)
-  * **Rithvika B** (Backend Developer)
-  * **Bhavna Sarathy** (ML Developer)
+  * **Gayathri Sathish Kumar**
+  * **Rounith Rathesh**
+  * **Rithvika B**
+  * **Bhavna Sarathy**
 
 ---
 
