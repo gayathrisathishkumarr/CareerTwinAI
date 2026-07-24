@@ -8,8 +8,8 @@ A dynamic, AI-powered **digital twin** of a professional identity — replacing 
 ---
 
 ## 👥 Team Details
-* **Team Name:** CareerTwin Builders
-* **Track:** Web & AI / Professional Identity
+* **Team Name:** INVICTUS
+* **Track:** AI for Education & Career Development
 * **Team Members:**
   * **Gayathri Sathish Kumar**
   * **Rounith Rathesh**
