@@ -616,25 +616,45 @@ flowchart TD
 
 ## 🖼️ Demo Screenshots
 
-> Screenshots captured during development and live testing.
+### Dashboard — KPI Overview & Skills Radar
+The main overview with Profile Completeness, Skill Score, Career Potential, and the interactive Capability Radar.
 
-### Dashboard — Before Upload (Zero State)
-All KPIs start at `0%` with `Pending upload` prompts.
+![Dashboard](docs/assets/screenshot_dashboard.png)
 
-### Dashboard — After Resume Upload (Sample State)
-Profile completeness, skill score, radar chart, and growth path populate with visualized data.
+---
 
-### My Twin — PDF Uploader
-Shows loading spinner during upload, green checkmark after success, and extracted resume text preview.
+### My Twin — PDF Resume Uploader & Training Ring
+Upload your PDF resume with local text extraction. The Twin Training Ring animates from 0% to 68% once your evidence is processed.
 
-### Skill Analysis — Capability Radar
-Hexagonal radar chart comparing your scores vs. industry average across 6 capability axes.
+![My Twin](docs/assets/screenshot_my_twin.png)
 
-### Projects Portfolio
-Grid of projects with complexity meters, team size, and curated tech stack badges.
+---
 
-### GitHub Sync
-Live GitHub profile analysis with repository browser and language distribution chart.
+### Skill Analysis — Capability Radar & Growth Path
+Hexagonal radar comparing your scores vs. industry average, alongside a step-by-step personalized career growth roadmap.
+
+![Skill Analysis](docs/assets/screenshot_skill_analysis.png)
+
+---
+
+### Projects Portfolio — AI Complexity & Tech Stacks
+Verified projects with AI complexity ratings, tech stack badges, and an AI Insights sidebar with career readiness scoring.
+
+![Projects](docs/assets/screenshot_projects.png)
+
+---
+
+### GitHub Sync — Developer Profile & Repository Analysis
+Live GitHub profile integration showing repository browser, language distribution, and commit history.
+
+![GitHub Sync](docs/assets/screenshot_github.png)
+
+---
+
+### AI Mentor Chat — Twin Conversation Panel
+Interactive chat panel to talk with your Career Twin for personalized career guidance and interview preparation.
+
+![AI Chat](docs/assets/screenshot_chat.png)
 
 ---
 
