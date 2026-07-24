@@ -68,3 +68,18 @@ export const getLatestResume = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * Deletes all resume records
+ */
+export const deleteResume = async (req, res, next) => {
+  try {
+    await ResumeModel.deleteAll();
+    res.status(200).json({
+      status: 'success',
+      message: 'Resume deleted successfully.'
+    });
+  } catch (error) {
+    next(error);
+  }
+};

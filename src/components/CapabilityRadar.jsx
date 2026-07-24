@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import Chart from 'chart.js/auto'
 import { radar } from '../data/mock.js'
 
-export default function CapabilityRadar() {
+export default function CapabilityRadar({ youData = radar.you }) {
   const ref = useRef(null)
 
   useEffect(() => {
@@ -13,7 +13,7 @@ export default function CapabilityRadar() {
         datasets: [
           {
             label: 'Your twin',
-            data: radar.you,
+            data: youData,
             borderColor: '#4f46e5',
             backgroundColor: 'rgba(79,70,229,.18)',
             borderWidth: 2,
@@ -47,7 +47,7 @@ export default function CapabilityRadar() {
       },
     })
     return () => chart.destroy()
-  }, [])
+  }, [youData])
 
   return (
     <div style={{ position: 'relative', height: 260 }}>

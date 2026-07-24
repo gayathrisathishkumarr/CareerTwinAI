@@ -13,14 +13,19 @@ export default function Setup() {
   }, [])
 
   const fetchLatestResume = () => {
-    fetch('http://localhost:5001/api/resume/latest')
+    fetch('http://localhost:5001/api/resume/latest?t=' + Date.now())
       .then((res) => res.json())
       .then((res) => {
-        if (res.status === 'success' && res.data) {
+        if (res.status === 'success' && res.data && res.data.id) {
           setLatestResume(res.data)
+        } else {
+          setLatestResume(null)
         }
       })
-      .catch((err) => console.warn('Failed to fetch latest resume:', err))
+      .catch((err) => {
+        console.warn('Failed to fetch latest resume:', err)
+        setLatestResume(null)
+      })
   }
 
   const triggerFileSelect = () => {
@@ -61,6 +66,31 @@ export default function Setup() {
         setUploadError('Network error. Is the backend server running?')
         console.error('Upload error:', err)
       })
+  }
+
+  const handleDeleteResume = (e) => {
+    if (e) e.stopPropagation()
+    fetch('http://localhost:5001/api/resume/delete', { method: 'DELETE' })
+      .then((res) => res.json())
+      .then(() => {
+        setLatestResume(null)
+        setUploadError('')
+      })
+      .catch((err) => console.warn('Failed to delete resume:', err))
+  }
+
+  const handleReplaceResume = (e) => {
+    if (e) e.stopPropagation()
+    fetch('http://localhost:5001/api/resume/delete', { method: 'DELETE' })
+      .then((res) => res.json())
+      .then(() => {
+        setLatestResume(null)
+        setUploadError('')
+        if (fileInputRef.current) {
+          fileInputRef.current.click()
+        }
+      })
+      .catch((err) => console.warn('Failed to delete resume:', err))
   }
 
   const handleFileChange = (e) => {
@@ -107,36 +137,134 @@ export default function Setup() {
             />
             <div
               className={`drop ${isDragOver ? 'drag-over' : ''}`}
-              onClick={triggerFileSelect}
+              onClick={!latestResume ? triggerFileSelect : undefined}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               style={{
-                cursor: 'pointer',
-                border: isDragOver ? '2px dashed var(--indigo)' : '1px dashed var(--line)',
-                background: isDragOver ? 'var(--indigo-soft)' : 'none',
+                cursor: !latestResume ? 'pointer' : 'default',
+                border: isDragOver
+                  ? '2px dashed var(--indigo)'
+                  : latestResume
+                  ? '1px solid var(--green, #10b981)'
+                  : '1px dashed var(--line)',
+                background: isDragOver
+                  ? 'var(--indigo-soft)'
+                  : latestResume
+                  ? 'var(--green-soft, #ecfdf5)'
+                  : 'none',
                 transition: 'all 0.15s ease',
+                padding: '24px',
+                borderRadius: '12px',
+                textAlign: 'center'
               }}
             >
-              <div className="ic">
+              <div className="ic" style={{ marginBottom: 8 }}>
                 {uploading ? (
-                  <i className="ti ti-loader-2 ti-spin" style={{ color: 'var(--indigo)' }} />
+                  <i className="ti ti-loader-2 ti-spin" style={{ color: 'var(--indigo)', fontSize: 32 }} />
+                ) : latestResume ? (
+                  <i className="ti ti-circle-check-filled" style={{ color: 'var(--green, #10b981)', fontSize: 36 }} />
                 ) : (
-                  <i className="ti ti-file-upload" />
+                  <i className="ti ti-file-upload" style={{ fontSize: 32 }} />
                 )}
               </div>
               <b style={{ fontSize: 14 }}>
-                {uploading ? 'Uploading and analyzing resume...' : 'Click to select or drop your resume (PDF)'}
+                {uploading ? (
+                  'Uploading and extracting resume...'
+                ) : latestResume ? (
+                  <span style={{ color: 'var(--green-dark, #047857)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <i className="ti ti-check" /> Resume Uploaded &amp; Synced
+                  </span>
+                ) : (
+                  'Click to select or drop your resume (PDF)'
+                )}
               </b>
               <p className="muted" style={{ marginTop: 4 }}>
-                {latestResume ? `Connected: ${latestResume.originalFilename}` : 'PDF files are parsed into skill signals'}
+                {latestResume
+                  ? `Connected: ${latestResume.original_filename || latestResume.originalFilename || latestResume.filename || 'Resume.pdf'}`
+                  : 'PDF files are parsed into skill signals'}
               </p>
+              
+              {latestResume && !uploading && (
+                <div style={{ marginTop: 12, display: 'flex', gap: 10, justifyContent: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={handleReplaceResume}
+                    className="btn"
+                    style={{
+                      fontSize: 12,
+                      padding: '6px 14px',
+                      background: 'var(--indigo-soft, #e0e7ff)',
+                      color: 'var(--indigo, #4f46e5)',
+                      border: '1px solid var(--indigo, #4f46e5)',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4
+                    }}
+                  >
+                    <i className="ti ti-refresh" /> Replace PDF
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDeleteResume}
+                    className="btn"
+                    style={{
+                      fontSize: 12,
+                      padding: '6px 14px',
+                      background: '#fef2f2',
+                      color: '#ef4444',
+                      border: '1px solid #fca5a5',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4
+                    }}
+                  >
+                    <i className="ti ti-trash" /> Remove Data
+                  </button>
+                </div>
+              )}
+
               {uploadError && (
                 <p className="error-text" style={{ color: 'var(--coral)', fontSize: 12, marginTop: 6, fontWeight: 500 }}>
                   {uploadError}
                 </p>
               )}
             </div>
+
+            {/* Extracted Text Preview Below Uploader */}
+            {latestResume && (latestResume.extracted_text || latestResume.extractedText) && (
+              <div style={{ marginTop: 16, borderTop: '1px solid var(--line)', paddingTop: 16 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <b style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <i className="ti ti-file-text" style={{ color: 'var(--indigo)' }} /> Extracted Resume Text
+                  </b>
+                  <span style={{ fontSize: 11, color: 'var(--ink3)' }}>
+                    {(latestResume.extracted_text || latestResume.extractedText || '').length} characters extracted
+                  </span>
+                </div>
+                <div
+                  style={{
+                    background: 'var(--bg, #f8fafc)',
+                    border: '1px solid var(--line)',
+                    borderRadius: 8,
+                    padding: '12px 14px',
+                    maxHeight: '220px',
+                    overflowY: 'auto',
+                    fontFamily: 'monospace',
+                    fontSize: '12px',
+                    lineHeight: '1.6',
+                    whiteSpace: 'pre-wrap',
+                    color: 'var(--ink2, #334155)'
+                  }}
+                >
+                  {latestResume.extracted_text || latestResume.extractedText}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="card pad">
@@ -147,9 +275,11 @@ export default function Setup() {
                   <i className="ti ti-file-text" />
                 </div>
                 <div className="info">
-                  <b>Resume ({latestResume.originalFilename})</b>
+                  <b>Resume ({latestResume.original_filename || latestResume.originalFilename || latestResume.filename || 'Uploaded Resume'})</b>
                   <br />
-                  <small>Extracted {latestResume.extractedText ? latestResume.extractedText.length : 0} characters · {Math.round(latestResume.filesize / 1024)} KB</small>
+                  <small>
+                    Extracted {(latestResume.extracted_text || latestResume.extractedText || '').length} characters · {Math.round((latestResume.filesize || 0) / 1024)} KB
+                  </small>
                 </div>
                 <span className="chip ver"><i className="ti ti-check" /> Synced</span>
               </div>
@@ -181,13 +311,25 @@ export default function Setup() {
           <div className="card pad" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
             <div className="eyebrow" style={{ marginBottom: 14 }}>Twin training</div>
             <div style={{ display: 'grid', placeItems: 'center', marginBottom: 18 }}>
-              <Ring value={68} size={130} thickness={13} color="var(--indigo)" track="var(--line)" inner="#fff" label="learning you" valueColor="var(--indigo)" labelColor="var(--ink3)" suffix="%" />
+              <Ring value={latestResume ? 68 : 0} size={130} thickness={13} color="var(--indigo)" track="var(--line)" inner="#fff" label={latestResume ? "learning you" : "empty twin"} valueColor="var(--indigo)" labelColor="var(--ink3)" suffix="%" />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%', maxWidth: '240px', textAlign: 'left' }}>
-              <div className="check-row"><i className="ti ti-circle-check-filled" style={{ color: 'var(--green)' }} /> Parsed 11 projects</div>
-              <div className="check-row"><i className="ti ti-circle-check-filled" style={{ color: 'var(--green)' }} /> Verified 24 skills</div>
-              <div className="check-row"><i className="ti ti-loader-2 ti-spin" style={{ color: 'var(--indigo)' }} /> Cross-checking evidence…</div>
-              <div className="check-row"><i className="ti ti-circle" style={{ color: 'var(--ink3)' }} /> Add 1 more source to reach 90%</div>
+              <div className="check-row">
+                <i className={latestResume ? "ti ti-circle-check-filled" : "ti ti-circle"} style={{ color: latestResume ? 'var(--green)' : 'var(--ink3)' }} /> 
+                {latestResume ? 'Parsed 11 projects' : 'Parsed 0 projects'}
+              </div>
+              <div className="check-row">
+                <i className={latestResume ? "ti ti-circle-check-filled" : "ti ti-circle"} style={{ color: latestResume ? 'var(--green)' : 'var(--ink3)' }} /> 
+                {latestResume ? 'Verified 24 skills' : 'Verified 0 skills'}
+              </div>
+              <div className="check-row">
+                <i className={latestResume ? "ti ti-loader-2 ti-spin" : "ti ti-circle"} style={{ color: latestResume ? 'var(--indigo)' : 'var(--ink3)' }} /> 
+                {latestResume ? 'Cross-checking evidence…' : 'Pending resume upload'}
+              </div>
+              <div className="check-row">
+                <i className="ti ti-circle" style={{ color: 'var(--ink3)' }} /> 
+                {latestResume ? 'Add 1 more source to reach 90%' : 'Upload resume to reach 68%'}
+              </div>
             </div>
           </div>
 
