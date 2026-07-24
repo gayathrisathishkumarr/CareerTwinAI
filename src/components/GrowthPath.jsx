@@ -13,38 +13,41 @@ function nodeStyle(state) {
   return { background: 'var(--line)', color: 'var(--ink2)' }
 }
 
-export default function GrowthPath() {
+export default function GrowthPath({ isZero = false }) {
   return (
     <div className="path" style={{ marginTop: 6 }}>
-      {growthPath.map((s, i) => (
-        <div className="step" key={i}>
-          <div className="n" style={nodeStyle(s.state)}>
-            {s.state === 'done' ? <i className="ti ti-check" /> : i + 1}
-          </div>
-          <div className="body">
-            <b>{s.title}</b>
-            <p>{s.desc}</p>
-            {s.chips.length > 0 && (
-              <div className="meta">
-                {s.chips.map((c, j) => {
-                  const cfg = chipStyle[c.kind]
-                  if (c.kind === 'ver')
+      {growthPath.map((s, i) => {
+        const itemState = isZero ? 'pending' : s.state
+        return (
+          <div className="step" key={i}>
+            <div className="n" style={nodeStyle(itemState)}>
+              {itemState === 'done' ? <i className="ti ti-check" /> : i + 1}
+            </div>
+            <div className="body">
+              <b>{s.title}</b>
+              <p>{s.desc}</p>
+              {s.chips.length > 0 && (
+                <div className="meta">
+                  {s.chips.map((c, j) => {
+                    const cfg = chipStyle[c.kind]
+                    if (c.kind === 'ver')
+                      return (
+                        <span className="chip ver" key={j}>
+                          <i className="ti ti-rosette-discount-check" /> {c.t}
+                        </span>
+                      )
                     return (
-                      <span className="chip ver" key={j}>
-                        <i className="ti ti-rosette-discount-check" /> {c.t}
+                      <span className="tag" key={j} style={cfg ? cfg.style : undefined}>
+                        {c.t}
                       </span>
                     )
-                  return (
-                    <span className="tag" key={j} style={cfg ? cfg.style : undefined}>
-                      {c.t}
-                    </span>
-                  )
-                })}
-              </div>
-            )}
+                  })}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

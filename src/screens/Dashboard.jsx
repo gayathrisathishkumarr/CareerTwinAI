@@ -178,8 +178,10 @@ export default function Dashboard() {
   }, [loading, twinProfile])
 
   // Map values from database/profile if available
-  const completeness = twinProfile?.confidence || 85
-  const overallSkill = twinProfile?.careerReadiness || dbData?.twinIQ || 78
+  const hasResume = !!dbData?.hasResume
+  const completeness = hasResume ? (twinProfile?.confidence || 85) : 0
+  const overallSkill = hasResume ? (twinProfile?.careerReadiness || dbData?.twinIQ || 78) : 0
+  const profileStrength = hasResume ? 85 : 0
   const name = dbData?.livingProfile?.name || 'Rounith R.'
 
   return (
@@ -204,7 +206,7 @@ export default function Dashboard() {
             <div className="bar-track">
               <div className="bar-fill" style={{ width: `${completeness}%`, background: '#8B5CF6' }} />
             </div>
-            <span className="kpi-sub">Great! Keep it up.</span>
+            <span className="kpi-sub">{hasResume ? 'Great! Keep it up.' : 'Upload resume to start'}</span>
           </div>
         </div>
 
@@ -217,7 +219,7 @@ export default function Dashboard() {
             <div className="bar-track">
               <div className="bar-fill" style={{ width: `${overallSkill}%`, background: '#10B981' }} />
             </div>
-            <span className="kpi-sub green-badge">↑ Above Average</span>
+            <span className="kpi-sub green-badge">{hasResume ? '↑ Above Average' : 'Pending upload'}</span>
           </div>
         </div>
 
@@ -226,8 +228,8 @@ export default function Dashboard() {
           <div className="kpi-icon-wrap Blue"><i className="ti ti-chart-line" /></div>
           <div className="kpi-content">
             <span className="kpi-label">Career Potential</span>
-            <h2 className="kpi-value">High</h2>
-            <span className="kpi-sub">↑ Keep growing!</span>
+            <h2 className="kpi-value">{hasResume ? 'High' : 'Pending'}</h2>
+            <span className="kpi-sub">{hasResume ? '↑ Keep growing!' : '0 evidence points'}</span>
           </div>
           <div className="sparkline-container">
             <svg viewBox="0 0 100 30" className="sparkline-svg">
@@ -257,11 +259,11 @@ export default function Dashboard() {
           <div className="kpi-icon-wrap Orange"><i className="ti ti-shield-check" /></div>
           <div className="kpi-content">
             <span className="kpi-label">Profile Strength</span>
-            <h2 className="kpi-value">85%</h2>
+            <h2 className="kpi-value">{profileStrength}%</h2>
             <div className="bar-track">
-              <div className="bar-fill" style={{ width: '85%', background: '#F97316' }} />
+              <div className="bar-fill" style={{ width: `${profileStrength}%`, background: '#F97316' }} />
             </div>
-            <span className="kpi-sub">Great! Keep it up.</span>
+            <span className="kpi-sub">{hasResume ? 'Great! Keep it up.' : 'Pending upload'}</span>
           </div>
         </div>
       </div>

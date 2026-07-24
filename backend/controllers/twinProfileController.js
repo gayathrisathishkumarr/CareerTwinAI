@@ -12,7 +12,7 @@ export const getTwinProfile = async (req, res, next) => {
     let structuredAnalysis = ResumeAnalysisService.getEmptyProfile();
 
     if (latestResume && latestResume.extracted_text) {
-      structuredAnalysis = await ResumeAnalysisService.analyzeText(latestResume.extracted_text);
+      structuredAnalysis = ResumeAnalysisService.analyzeText(latestResume.extracted_text);
     }
 
     const twinProfile = TwinProfileService.generateProfile(structuredAnalysis);

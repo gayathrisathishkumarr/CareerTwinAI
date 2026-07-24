@@ -65,6 +65,19 @@ class ResumeModel {
       });
     });
   }
+
+  /**
+   * Deletes all uploaded resume records from SQLite
+   */
+  static deleteAll() {
+    return new Promise((resolve, reject) => {
+      const sql = `DELETE FROM resumes`;
+      db.run(sql, [], function (err) {
+        if (err) return reject(err);
+        resolve({ deletedCount: this.changes });
+      });
+    });
+  }
 }
 
 // Auto-initialize table on import
