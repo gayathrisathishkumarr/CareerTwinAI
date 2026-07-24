@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import Sidebar from './components/Sidebar.jsx'
 import Topbar from './components/Topbar.jsx'
 import Dashboard from './screens/Dashboard.jsx'
@@ -8,7 +8,29 @@ import Chat from './screens/Chat.jsx'
 import Setup from './screens/Setup.jsx'
 import Discover from './screens/Discover.jsx'
 import Candidate from './screens/Candidate.jsx'
-import PlaceholderScreen from './screens/PlaceholderScreen.jsx'
+import Projects from './screens/Projects.jsx'
+
+const ComingSoon = ({ title, description, icon }) => {
+  const navigate = useNavigate();
+  return (
+    <div className="placeholder-screen fade">
+      <div className="page-h">
+        <div>
+          <h1>{title}</h1>
+          <p>{description}</p>
+        </div>
+        <button className="btn sec-btn" onClick={() => navigate('/')}>
+          <i className="ti ti-arrow-left" /> Back to Dashboard
+        </button>
+      </div>
+      <div className="placeholder-content card pad" style={{ textAlign: 'center', padding: '40px' }}>
+        <i className={`ti ${icon || 'ti-rocket'} main-icon`} style={{ fontSize: '48px', color: 'var(--brand)', marginBottom: '16px' }} />
+        <h2>{title} features are currently syncing</h2>
+        <p style={{ color: 'var(--ink2)' }}>Your AI digital twin is processing your workspace integrations.</p>
+      </div>
+    </div>
+  )
+}
 
 export default function App() {
   return (
@@ -21,29 +43,23 @@ export default function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/my-twin" element={<Setup />} />
             <Route path="/skills" element={<SkillAnalysis />} />
-            <Route path="/projects" element={
-              <PlaceholderScreen 
-                title="Projects" 
-                description="Showcase and verify your engineering projects." 
-                icon="ti-folder" 
-              />
-            } />
+            <Route path="/projects" element={<Projects />} />
             <Route path="/resume" element={
-              <PlaceholderScreen 
+              <ComingSoon 
                 title="Resume Sync" 
                 description="Upload and cross-reference your PDF resume with your twin." 
                 icon="ti-file-text" 
               />
             } />
             <Route path="/github" element={
-              <PlaceholderScreen 
+              <ComingSoon 
                 title="GitHub Sync" 
                 description="Connect repos to analyze commits and code complexity." 
                 icon="ti-brand-github" 
               />
             } />
             <Route path="/learning-path" element={
-              <PlaceholderScreen 
+              <ComingSoon 
                 title="Learning Path" 
                 description="Personalized roadmap to bridge your skill gaps." 
                 icon="ti-route" 
@@ -51,14 +67,14 @@ export default function App() {
             } />
             <Route path="/chat" element={<Chat />} />
             <Route path="/job-matches" element={
-              <PlaceholderScreen 
+              <ComingSoon 
                 title="Job Matches" 
                 description="Discover roles matching your twin's verified skill signals." 
                 icon="ti-briefcase" 
               />
             } />
             <Route path="/settings" element={
-              <PlaceholderScreen 
+              <ComingSoon 
                 title="Settings" 
                 description="Manage privacy, notifications, and integration settings." 
                 icon="ti-settings" 
