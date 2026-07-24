@@ -1,70 +1,95 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import Ring from '../components/Ring.jsx'
 
 export default function Setup() {
-  const [latestResume, setLatestResume] = useState(null)
-  const [uploading, setUploading] = useState(false)
-  const [uploadError, setUploadError] = useState('')
-  const [isDragOver, setIsDragOver] = useState(false)
   const fileInputRef = useRef(null)
+  const [loading, setLoading] = useState(false)
+  const [statusMessage, setStatusMessage] = useState(null)
+  const [uploadedFile, setUploadedFile] = useState(null)
+  const [extractedText, setExtractedText] = useState('')
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [trainingScore, setTrainingScore] = useState(68)
+  const [isDragOver, setIsDragOver] = useState(false)
+
+  const fetchLatestResume = async () => {
+    try {
+      const res = await fetch('http://localhost:5001/api/resume/latest')
+      const resData = await res.json()
+      if (resData && resData.data) {
+        setUploadedFile(resData.data.original_filename || resData.data.filename)
+        setTrainingScore(85)
+        setExtractedText(resData.data.extracted_text || '')
+      }
+    } catch (err) {
+      // Ignore errors on initial fetch
+    }
+  }
 
   useEffect(() => {
     fetchLatestResume()
   }, [])
 
-  const fetchLatestResume = () => {
-    fetch('http://localhost:5001/api/resume/latest')
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.status === 'success' && res.data) {
-          setLatestResume(res.data)
-        }
-      })
-      .catch((err) => console.warn('Failed to fetch latest resume:', err))
-  }
-
-  const triggerFileSelect = () => {
+  const handleDropzoneClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click()
     }
   }
 
-  const uploadFile = (file) => {
+  const uploadFile = async (file) => {
     if (!file) return
-    if (file.type !== 'application/pdf') {
-      setUploadError('Only PDF files are supported currently.')
+
+    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+      setStatusMessage({
+        type: 'error',
+        text: 'Invalid file format. Only PDF files are allowed.'
+      })
       return
     }
 
-    setUploading(true)
-    setUploadError('')
+    setLoading(true)
+    setStatusMessage(null)
 
     const formData = new FormData()
     formData.append('resume', file)
 
-    fetch('http://localhost:5001/api/resume/upload', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setUploading(false)
-        if (res.status === 'success') {
-          setLatestResume(res.data)
-          alert('Resume uploaded and analyzed successfully! Your Twin training is updating.')
-        } else {
-          setUploadError(res.message || 'Failed to upload resume.')
-        }
+    try {
+      const response = await fetch('http://localhost:5001/api/resume/upload', {
+        method: 'POST',
+        body: formData
       })
-      .catch((err) => {
-        setUploading(false)
-        setUploadError('Network error. Is the backend server running?')
-        console.error('Upload error:', err)
+
+      const result = await response.json()
+
+      if (response.ok && result.status === 'success') {
+        setStatusMessage({
+          type: 'success',
+          text: 'Resume uploaded successfully'
+        })
+        const resData = result.data || {}
+        setUploadedFile(resData.original_filename || file.name)
+        setTrainingScore(85)
+        await fetchLatestResume()
+      } else {
+        setStatusMessage({
+          type: 'error',
+          text: result.message || 'Failed to upload resume.'
+        })
+      }
+    } catch (err) {
+      setStatusMessage({
+        type: 'error',
+        text: err.message || 'Network error occurred while uploading.'
       })
+    } finally {
+      setLoading(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
   }
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
+  const handleFileChange = (event) => {
+    const file = event.target.files && event.target.files[0]
     uploadFile(file)
   }
 
@@ -80,9 +105,15 @@ export default function Setup() {
   const handleDrop = (e) => {
     e.preventDefault()
     setIsDragOver(false)
-    const file = e.dataTransfer.files[0]
+    const file = e.dataTransfer.files && e.dataTransfer.files[0]
     uploadFile(file)
   }
+
+  // Text display formatting
+  const isLongText = extractedText.length > 500
+  const displayedText = isLongText && !isExpanded 
+    ? `${extractedText.slice(0, 500)}...` 
+    : extractedText
 
   return (
     <>
@@ -98,16 +129,20 @@ export default function Setup() {
         <div className="stack">
           <div className="card pad">
             <div className="sec-t"><i className="ti ti-upload" /><h3>Add your evidence</h3></div>
+            
+            {/* Hidden PDF File Input */}
             <input
               type="file"
+              accept="application/pdf"
               ref={fileInputRef}
               style={{ display: 'none' }}
-              accept=".pdf"
               onChange={handleFileChange}
             />
+
+            {/* Clickable & Drag-and-Drop Area */}
             <div
               className={`drop ${isDragOver ? 'drag-over' : ''}`}
-              onClick={triggerFileSelect}
+              onClick={handleDropzoneClick}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
@@ -116,44 +151,109 @@ export default function Setup() {
                 border: isDragOver ? '2px dashed var(--indigo)' : '1px dashed var(--line)',
                 background: isDragOver ? 'var(--indigo-soft)' : 'none',
                 transition: 'all 0.15s ease',
+                position: 'relative'
               }}
             >
-              <div className="ic">
-                {uploading ? (
-                  <i className="ti ti-loader-2 ti-spin" style={{ color: 'var(--indigo)' }} />
-                ) : (
-                  <i className="ti ti-file-upload" />
-                )}
-              </div>
-              <b style={{ fontSize: 14 }}>
-                {uploading ? 'Uploading and analyzing resume...' : 'Click to select or drop your resume (PDF)'}
-              </b>
-              <p className="muted" style={{ marginTop: 4 }}>
-                {latestResume ? `Connected: ${latestResume.originalFilename}` : 'PDF files are parsed into skill signals'}
-              </p>
-              {uploadError && (
-                <p className="error-text" style={{ color: 'var(--coral)', fontSize: 12, marginTop: 6, fontWeight: 500 }}>
-                  {uploadError}
-                </p>
+              {loading ? (
+                <div style={{ textAlign: 'center', padding: '10px 0' }}>
+                  <i className="ti ti-loader-2 ti-spin" style={{ fontSize: 28, color: 'var(--indigo)' }} />
+                  <b style={{ display: 'block', marginTop: 8, fontSize: 14 }}>Uploading and extracting text...</b>
+                  <p className="muted">Please wait while your PDF resume is processed</p>
+                </div>
+              ) : (
+                <>
+                  <div className="ic"><i className="ti ti-file-upload" /></div>
+                  <b style={{ fontSize: 14 }}>Drop résumé, projects or case studies</b>
+                  <p className="muted" style={{ marginTop: 4 }}>PDF only (max 5 MB) — parsed into skill signals</p>
+                </>
               )}
             </div>
+
+            {/* Status Feedback Banner */}
+            {statusMessage && (
+              <div
+                style={{
+                  marginTop: 12,
+                  padding: '10px 14px',
+                  borderRadius: 10,
+                  fontSize: 13,
+                  fontWeight: 500,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  background: statusMessage.type === 'success' ? '#e6f6ec' : '#fdeea8',
+                  color: statusMessage.type === 'success' ? '#16a34a' : '#92400e',
+                  border: `1px solid ${statusMessage.type === 'success' ? '#bbf7d0' : '#fef3c7'}`
+                }}
+              >
+                <i className={`ti ${statusMessage.type === 'success' ? 'ti-circle-check-filled' : 'ti-alert-circle'}`} />
+                <span>{statusMessage.text}</span>
+              </div>
+            )}
+
+            {/* Uploaded File Info Card */}
+            {uploadedFile && (
+              <div
+                style={{
+                  marginTop: 12,
+                  padding: '10px 14px',
+                  background: 'var(--indigo-soft, #eef0ff)',
+                  borderRadius: 10,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justify: 'space-between',
+                  fontSize: 13
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <i className="ti ti-file-text" style={{ color: 'var(--indigo)', fontSize: 18 }} />
+                  <span>Uploaded PDF: <strong>{uploadedFile}</strong></span>
+                </div>
+                <span className="chip ver" style={{ fontSize: 11 }}><i className="ti ti-check" /> Parsed &amp; Extracted</span>
+              </div>
+            )}
+
+            {/* Extracted Resume Text Card */}
+            {extractedText && (
+              <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px dashed var(--line, #eef0f7)' }}>
+                <div className="sec-t" style={{ marginBottom: 8 }}>
+                  <i className="ti ti-file-code" style={{ color: 'var(--indigo)' }} />
+                  <h3>Extracted Resume Text</h3>
+                </div>
+                <div
+                  style={{
+                    maxHeight: 200,
+                    overflowY: 'auto',
+                    padding: 12,
+                    background: '#f8fafc',
+                    borderRadius: 8,
+                    border: '1px solid var(--line, #e2e8f0)',
+                    fontSize: 12.5,
+                    fontFamily: 'monospace',
+                    lineHeight: 1.5,
+                    color: '#334155',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word'
+                  }}
+                >
+                  {displayedText}
+                </div>
+                {isLongText && (
+                  <button
+                    className="btn"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    style={{ marginTop: 8, padding: '5px 12px', fontSize: 12 }}
+                  >
+                    <i className={`ti ${isExpanded ? 'ti-chevron-up' : 'ti-chevron-down'}`} />
+                    {isExpanded ? 'Show Less' : 'View Full Text'}
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="card pad">
             <div className="sec-t"><i className="ti ti-plug-connected" /><h3>Connected sources</h3></div>
-            {latestResume && (
-              <div className="src" style={{ animation: 'fadeIn 0.4s ease' }}>
-                <div className="ic" style={{ background: 'var(--indigo-soft)', color: 'var(--indigo)' }}>
-                  <i className="ti ti-file-text" />
-                </div>
-                <div className="info">
-                  <b>Resume ({latestResume.originalFilename})</b>
-                  <br />
-                  <small>Extracted {latestResume.extractedText ? latestResume.extractedText.length : 0} characters · {Math.round(latestResume.filesize / 1024)} KB</small>
-                </div>
-                <span className="chip ver"><i className="ti ti-check" /> Synced</span>
-              </div>
-            )}
             <div className="src">
               <div className="ic" style={{ background: '#eef0f7', color: '#141625' }}><i className="ti ti-brand-github" /></div>
               <div className="info"><b>GitHub</b><br /><small>3 repos analyzed · 842 commits read</small></div>
@@ -178,15 +278,19 @@ export default function Setup() {
         </div>
 
         <div className="stack">
-          <div className="card pad" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-            <div className="eyebrow" style={{ marginBottom: 14 }}>Twin training</div>
-            <div style={{ display: 'grid', placeItems: 'center', marginBottom: 18 }}>
-              <Ring value={68} size={130} thickness={13} color="var(--indigo)" track="var(--line)" inner="#fff" label="learning you" valueColor="var(--indigo)" labelColor="var(--ink3)" suffix="%" />
+          <div className="card pad train">
+            <div className="eyebrow" style={{ marginBottom: 10 }}>Twin training</div>
+            <div style={{ display: 'grid', placeItems: 'center', marginBottom: 14 }}>
+              <Ring value={trainingScore} size={130} thickness={13} color="var(--indigo)" track="var(--line)" inner="#fff" label="learning you" valueColor="var(--indigo)" labelColor="var(--ink3)" suffix="%" />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%', maxWidth: '240px', textAlign: 'left' }}>
               <div className="check-row"><i className="ti ti-circle-check-filled" style={{ color: 'var(--green)' }} /> Parsed 11 projects</div>
               <div className="check-row"><i className="ti ti-circle-check-filled" style={{ color: 'var(--green)' }} /> Verified 24 skills</div>
-              <div className="check-row"><i className="ti ti-loader-2 ti-spin" style={{ color: 'var(--indigo)' }} /> Cross-checking evidence…</div>
+              {uploadedFile ? (
+                <div className="check-row"><i className="ti ti-circle-check-filled" style={{ color: 'var(--green)' }} /> Resume parsed &amp; text extracted</div>
+              ) : (
+                <div className="check-row"><i className="ti ti-loader-2" style={{ color: 'var(--indigo)' }} /> Cross-checking evidence…</div>
+              )}
               <div className="check-row"><i className="ti ti-circle" style={{ color: 'var(--ink3)' }} /> Add 1 more source to reach 90%</div>
             </div>
           </div>
