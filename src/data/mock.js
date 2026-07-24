@@ -1,12 +1,12 @@
 export const profile = {
-  name: 'Aanya Rao',
-  initials: 'AR',
-  role: 'Software engineer',
-  location: 'San Francisco',
-  years: 5,
-  twinIQ: 82,
-  readiness: 78,
-  targetRole: 'Senior ML Engineer',
+  name: 'Rounith R.',
+  initials: 'R',
+  role: 'Student',
+  location: 'Chennai',
+  years: 1,
+  twinIQ: 78,
+  readiness: 85,
+  targetRole: 'Software Developer',
 }
 
 export const recruiter = {
@@ -57,7 +57,7 @@ export const growthPath = [
 ]
 
 export const candidates = [
-  { name: 'Aanya Rao', initials: 'AR', color: '#4f46e5', role: 'Software engineer · 5y · SF', match: 92, skills: ['Python', 'Data eng', 'MLOps ↑'] },
+  { name: 'Rounith R.', initials: 'R', color: '#4f46e5', role: 'Student · 1y · Chennai', match: 85, skills: ['Python', 'Data Structures', 'ML'] },
   { name: 'Diego Marín', initials: 'DM', color: '#0ea5a4', role: 'ML engineer · 6y · Remote', match: 88, skills: ['PyTorch', 'Rust', 'Distributed'] },
   { name: 'Priya Nair', initials: 'PN', color: '#f59e0b', role: 'Data scientist · 4y · NYC', match: 81, skills: ['Python', 'Stats', 'LLMs ↑'] },
   { name: 'Sam Okoye', initials: 'SO', color: '#ec4899', role: 'Backend → ML · 7y · London', match: 76, skills: ['Go', 'Systems', 'ML ↑'] },
