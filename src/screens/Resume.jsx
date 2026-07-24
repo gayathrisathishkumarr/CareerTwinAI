@@ -114,33 +114,60 @@ export default function Resume() {
             </div>
           </div>
 
-          {/* Right Sub-Section: Primary Focal Score */}
+          {/* Right Sub-Section: Primary Focal Score & Insights */}
           <div
             style={{
-              display: 'flex',
-              flexDirection: 'column',
+              display: 'grid',
+              gridTemplateColumns: 'auto 1fr',
+              gap: '20px',
               alignItems: 'center',
-              justify: 'center',
               paddingLeft: '20px',
               borderLeft: '1px solid var(--line)',
               height: '100%'
             }}
           >
-            <span className="eyebrow" style={{ marginBottom: '10px', fontSize: '11.5px' }}>
-              Career Resume Score
-            </span>
-            <Ring
-              value={96}
-              size={130}
-              thickness={12}
-              color="var(--indigo)"
-              track="var(--line)"
-              inner="#fff"
-              label="Excellent"
-              valueColor="var(--indigo)"
-              labelColor="var(--indigo)"
-              suffix="%"
-            />
+            {/* Score Ring */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <span className="eyebrow" style={{ marginBottom: '10px', fontSize: '11px', letterSpacing: '0.06em' }}>
+                Career Resume Score
+              </span>
+              <Ring
+                value={96}
+                size={120}
+                thickness={11}
+                color="var(--indigo)"
+                track="var(--line)"
+                inner="#fff"
+                label="Excellent"
+                valueColor="var(--indigo)"
+                labelColor="var(--indigo)"
+                suffix="%"
+              />
+            </div>
+
+            {/* Score Highlights & Benchmark Indicators */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', padding: '6px 10px', background: '#f8fafc', borderRadius: '8px', border: '1px solid var(--line)' }}>
+                <span style={{ color: 'var(--ink2)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <i className="ti ti-cpu" style={{ color: 'var(--indigo)' }} /> ATS Parsing
+                </span>
+                <span className="chip ver" style={{ fontSize: '10px', padding: '2px 7px', background: '#e6f6ec', color: '#16a34a' }}>100% Pass</span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', padding: '6px 10px', background: '#f8fafc', borderRadius: '8px', border: '1px solid var(--line)' }}>
+                <span style={{ color: 'var(--ink2)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <i className="ti ti-target-arrow" style={{ color: 'var(--indigo)' }} /> Role Match
+                </span>
+                <strong style={{ color: 'var(--ink)', fontSize: '11.5px' }}>96% Fit</strong>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', padding: '6px 10px', background: '#f8fafc', borderRadius: '8px', border: '1px solid var(--line)' }}>
+                <span style={{ color: 'var(--ink2)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <i className="ti ti-trending-up" style={{ color: 'var(--indigo)' }} /> Percentile
+                </span>
+                <span className="chip" style={{ fontSize: '10px', padding: '2px 7px', background: 'var(--indigo-soft)', color: 'var(--indigo)' }}>Top 4%</span>
+              </div>
+            </div>
           </div>
         </div>
 
