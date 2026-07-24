@@ -10,6 +10,7 @@ import Discover from './screens/Discover.jsx'
 import Candidate from './screens/Candidate.jsx'
 import Projects from './screens/Projects.jsx'
 import Resume from './screens/Resume.jsx'
+import GitHubSync from './screens/GitHubSync.jsx'
 
 const ComingSoon = ({ title, description, icon }) => {
   const navigate = useNavigate();
@@ -46,13 +47,7 @@ export default function App() {
             <Route path="/skills" element={<SkillAnalysis />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/resume" element={<Resume />} />
-            <Route path="/github" element={
-              <ComingSoon 
-                title="GitHub Sync" 
-                description="Connect repos to analyze commits and code complexity." 
-                icon="ti-brand-github" 
-              />
-            } />
+            <Route path="/github" element={<GitHubSync />} />
             <Route path="/learning-path" element={
               <ComingSoon 
                 title="Learning Path" 
