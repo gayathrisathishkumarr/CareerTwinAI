@@ -1,3 +1,4 @@
+import React from 'react'
 import Ring from '../components/Ring.jsx'
 
 export default function Setup() {

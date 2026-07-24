@@ -1,3 +1,4 @@
+import React from 'react'
 import ChatPanel from '../components/ChatPanel.jsx'
 import { useRole } from '../context/RoleContext.jsx'
 

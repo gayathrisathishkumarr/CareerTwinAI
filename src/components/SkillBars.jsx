@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { skillBars } from '../data/mock.js'
 
 export default function SkillBars({ bars = skillBars }) {

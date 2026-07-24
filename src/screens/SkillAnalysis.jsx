@@ -1,3 +1,4 @@
+import React from 'react'
 import CapabilityRadar from '../components/CapabilityRadar.jsx'
 import SkillBars from '../components/SkillBars.jsx'
 import GrowthPath from '../components/GrowthPath.jsx'

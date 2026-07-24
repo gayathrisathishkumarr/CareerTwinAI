@@ -1,3 +1,5 @@
+import React from 'react'
+
 export default function MetricCard({ label, value, sub, icon, color, bg }) {
   return (
     <div className="metric">

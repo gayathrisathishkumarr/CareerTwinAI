@@ -1,3 +1,4 @@
+import React from 'react'
 import { growthPath } from '../data/mock.js'
 
 const chipStyle = {

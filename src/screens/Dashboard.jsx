@@ -1,3 +1,4 @@
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import TwinHero from '../components/TwinHero.jsx'
 import MetricCard from '../components/MetricCard.jsx'

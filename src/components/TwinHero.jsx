@@ -1,3 +1,4 @@
+import React from 'react'
 import Ring from './Ring.jsx'
 import { profile } from '../data/mock.js'
 

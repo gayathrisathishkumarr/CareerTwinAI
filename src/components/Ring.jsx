@@ -1,3 +1,5 @@
+import React from 'react'
+
 export default function Ring({
   value = 0,
   size = 104,

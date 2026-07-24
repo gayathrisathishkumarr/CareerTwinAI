@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Ring from '../components/Ring.jsx'
 import { candidates } from '../data/mock.js'
