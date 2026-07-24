@@ -9,6 +9,7 @@ import Setup from './screens/Setup.jsx'
 import Discover from './screens/Discover.jsx'
 import Candidate from './screens/Candidate.jsx'
 import Projects from './screens/Projects.jsx'
+import Resume from './screens/Resume.jsx'
 
 const ComingSoon = ({ title, description, icon }) => {
   const navigate = useNavigate();
@@ -44,13 +45,7 @@ export default function App() {
             <Route path="/my-twin" element={<Setup />} />
             <Route path="/skills" element={<SkillAnalysis />} />
             <Route path="/projects" element={<Projects />} />
-            <Route path="/resume" element={
-              <ComingSoon 
-                title="Resume Sync" 
-                description="Upload and cross-reference your PDF resume with your twin." 
-                icon="ti-file-text" 
-              />
-            } />
+            <Route path="/resume" element={<Resume />} />
             <Route path="/github" element={
               <ComingSoon 
                 title="GitHub Sync" 
