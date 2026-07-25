@@ -7,6 +7,9 @@ import dashboardRoutes from './routes/dashboardRoutes.js';
 import resumeRoutes from './routes/resumeRoutes.js';
 import twinRoutes from './routes/twinRoutes.js';
 import githubRoutes from './routes/githubRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
+import jobRoutes from './routes/jobRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
 
@@ -42,6 +45,9 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/resume', resumeRoutes);
 app.use('/api/twin', twinRoutes);
 app.use('/api/github', githubRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/auth', authRoutes);
 
 // Global 404 Handler
 app.use((req, res) => {
