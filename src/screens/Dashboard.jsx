@@ -369,6 +369,142 @@ export default function Dashboard() {
             <p className="dash2-empty">No activity yet — upload your resume to get started.</p>
           )}
         </div>
+
+        {/* Column 2: AI Mentor Chat & Next Best Step */}
+        <div className="grid-column col-center">
+          {/* AI Mentor Chat Callout */}
+          <div className="card pad mentor-chat-panel-new">
+            <div className="robot-wrapper-new">
+              <div className="robot-orb-new">
+                <i className="ti ti-robot" />
+              </div>
+              <div className="robot-details-new">
+                <h4>AI Mentor Chat</h4>
+                <p>Chat with your AI Twin for personalized career guidance.</p>
+              </div>
+            </div>
+            <button className="btn pri-btn-new" onClick={() => navigate('/chat')}>
+              <i className="ti ti-message" /> Start a Conversation
+            </button>
+          </div>
+
+          {/* Next Best Step */}
+          <div className="card pad next-step-panel-new">
+            <div className="next-step-layout-new">
+              <span className="panel-tag-new">Next Best Step</span>
+              <h4>Improve your DSA skills</h4>
+              <p>You're close to leveling up! Practice advanced problems.</p>
+              
+              <div className="target-flex">
+                <button className="btn pri-btn-new width-fit" onClick={() => navigate('/learning-path')}>
+                  View Learning Path
+                </button>
+                <div className="target-illustration-new">
+                  <svg viewBox="0 0 100 100" className="target-svg">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#E2E8F0" strokeWidth="7" />
+                    <circle cx="50" cy="50" r="30" fill="none" stroke="#FCA5A5" strokeWidth="7" />
+                    <circle cx="50" cy="50" r="20" fill="none" stroke="#EF4444" strokeWidth="7" />
+                    <circle cx="50" cy="50" r="10" fill="#EF4444" />
+                    {/* Arrow */}
+                    <path d="M80,20 L58,42" stroke="#3B82F6" strokeWidth="4" strokeLinecap="round" />
+                    <path d="M58,42 L65,42 M58,42 L58,35" stroke="#3B82F6" strokeWidth="4" strokeLinecap="round" />
+                    {/* Fletching */}
+                    <path d="M76,16 L84,24 M80,12 L88,20" stroke="#3B82F6" strokeWidth="2.5" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Column 3: Recent Activity & Job Matches */}
+        <div className="grid-column col-right">
+          {/* Recent Activity */}
+          <div className="card pad activity-panel-new">
+            <div className="panel-header-row-simple">
+              <h3>Recent Activity</h3>
+              <span className="view-link" onClick={() => navigate('/my-twin')}>View all</span>
+            </div>
+            <div className="activity-timeline-new">
+              <div className="activity-item-new">
+                <div className="activity-icon-new bg-green-soft text-green"><i className="ti ti-file-upload" /></div>
+                <div className="activity-content-new">
+                  <b>Resume uploaded</b>
+                  <span className="activity-time-new">2 hours ago</span>
+                </div>
+              </div>
+              <div className="activity-item-new">
+                <div className="activity-icon-new bg-black-soft text-black"><i className="ti ti-refresh" /></div>
+                <div className="activity-content-new">
+                  <b>GitHub profile synced</b>
+                  <span className="activity-time-new">5 hours ago</span>
+                </div>
+              </div>
+              <div className="activity-item-new">
+                <div className="activity-icon-new bg-blue-soft text-blue"><i className="ti ti-plus" /></div>
+                <div className="activity-content-new">
+                  <b>New skill added: Docker</b>
+                  <span className="activity-time-new">1 day ago</span>
+                </div>
+              </div>
+              <div className="activity-item-new">
+                <div className="activity-icon-new bg-light-blue-soft text-light-blue"><i className="ti ti-folder-plus" /></div>
+                <div className="activity-content-new">
+                  <b>Project added: Portfolio Website</b>
+                  <span className="activity-time-new">2 days ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Job Matches */}
+          <div className="card pad jobs-panel-new">
+            <div className="panel-header-row-simple">
+              <h3>Job Matches for You</h3>
+              <span className="view-link" onClick={() => navigate('/job-matches')}>View all</span>
+            </div>
+            <div className="job-matches-list-new">
+              <div className="job-match-item-new">
+                <div className="job-logo bg-red">tcs</div>
+                <div className="job-details-new">
+                  <h4>SDE Intern</h4>
+                  <div className="job-meta-new">
+                    <span className="job-company">TCS</span>
+                    <span className="job-dot">•</span>
+                    <span className="job-loc">Chennai</span>
+                  </div>
+                </div>
+                <div className="job-badge text-teal-badge">72% Match</div>
+              </div>
+
+              <div className="job-match-item-new">
+                <div className="job-logo bg-green">zoho</div>
+                <div className="job-details-new">
+                  <h4>Backend Developer Intern</h4>
+                  <div className="job-meta-new">
+                    <span className="job-company">Zoho</span>
+                    <span className="job-dot">•</span>
+                    <span className="job-loc">Chennai</span>
+                  </div>
+                </div>
+                <div className="job-badge text-teal-badge">68% Match</div>
+              </div>
+
+              <div className="job-match-item-new">
+                <div className="job-logo bg-orange">fractal</div>
+                <div className="job-details-new">
+                  <h4>ML Intern</h4>
+                  <div className="job-meta-new">
+                    <span className="job-company">Fractal</span>
+                    <span className="job-dot">•</span>
+                    <span className="job-loc">Remote</span>
+                  </div>
+                </div>
+                <div className="job-badge text-teal-badge">65% Match</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Privacy footer */}
