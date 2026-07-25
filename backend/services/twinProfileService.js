@@ -39,6 +39,21 @@ export class TwinProfileService {
     // 5. Top 5 Skills
     const topSkills = allSkills.slice(0, 5);
 
+    // 5b. Domain coverage scores — real evidence counts per domain, normalized
+    // against the candidate's strongest domain. Every domain is returned, including
+    // those with zero evidence: a domain with no coverage is itself a finding, and
+    // the full set gives the capability radar a complete set of axes.
+    // Sorted strongest-first so consumers can read [0] as the primary domain.
+    const domainCounts = this.computeDomainCounts(skillsObj);
+    const maxCount = Math.max(0, ...Object.values(domainCounts));
+    const domainScores = maxCount === 0 ? [] : Object.entries(domainCounts)
+      .map(([domain, count]) => ({
+        domain,
+        evidence: count,
+        score: Math.round((count / maxCount) * 100)
+      }))
+      .sort((a, b) => b.score - a.score);
+
     // 6. Professional Summary (2-3 sentences)
     const summary = this.generateSummary(personal, headline, primaryDomain, allSkills, projects, education);
 
@@ -77,6 +92,7 @@ export class TwinProfileService {
       primaryDomain,
       summary,
       topSkills,
+      domainScores,
       strengths,
       skillGaps,
       recommendedRoles,
@@ -85,8 +101,8 @@ export class TwinProfileService {
     };
   }
 
-  static determinePrimaryDomain(skillsObj, projects) {
-    const counts = {
+  static computeDomainCounts(skillsObj) {
+    return {
       'Artificial Intelligence': (skillsObj.libraries || []).filter(s => ['TensorFlow', 'PyTorch', 'Keras', 'Scikit-Learn', 'OpenCV'].includes(s)).length,
       'Data Science': (skillsObj.libraries || []).filter(s => ['Pandas', 'NumPy', 'Matplotlib', 'Seaborn', 'Scikit-Learn'].includes(s)).length,
       'Web Development': (skillsObj.frameworks || []).filter(s => ['React', 'Next.js', 'Vue', 'Angular', 'Node.js', 'Express', 'Django'].includes(s)).length,
@@ -94,6 +110,10 @@ export class TwinProfileService {
       'Frontend Development': (skillsObj.frameworks || []).filter(s => ['React', 'Vue', 'Angular', 'Svelte'].includes(s)).length + (skillsObj.programmingLanguages || []).filter(s => ['HTML', 'CSS', 'JavaScript', 'TypeScript'].includes(s)).length,
       'Cloud Computing': (skillsObj.cloud || []).length + (skillsObj.tools || []).filter(s => ['Docker', 'Kubernetes', 'Jenkins'].includes(s)).length
     };
+  }
+
+  static determinePrimaryDomain(skillsObj, projects) {
+    const counts = this.computeDomainCounts(skillsObj);
 
     let highest = 'Software Engineering';
     let maxCount = 0;
@@ -195,24 +215,27 @@ export class TwinProfileService {
     return ['Full Stack Developer', 'Software Engineer', 'Web Developer'];
   }
 
+  // Calibrated so a solid early-career profile lands in the 70s-80s;
+  // 100 requires an exceptional profile (max achievable is 98)
   static calculateCareerReadiness({ projectsCount, skillsCount, experienceCount, certificationsCount, educationCount }) {
-    let score = 40;
-    score += Math.min(projectsCount * 10, 25);
-    score += Math.min(skillsCount * 3, 20);
-    score += Math.min(experienceCount * 10, 15);
-    score += Math.min(certificationsCount * 5, 10);
-    score += Math.min(educationCount * 5, 10);
+    let score = 20;
+    score += Math.min(projectsCount * 6, 20);
+    score += Math.min(Math.round(skillsCount * 1.5), 18);
+    score += Math.min(experienceCount * 8, 20);
+    score += Math.min(certificationsCount * 4, 12);
+    score += Math.min(educationCount * 4, 8);
     return Math.min(score, 100);
   }
 
+  // Extraction completeness — max 88 so "fully parsed" still reads honestly
   static calculateConfidence({ hasName, hasEmail, hasSkills, hasEducation, hasProjects, hasExperience }) {
-    let score = 20;
-    if (hasName) score += 15;
-    if (hasEmail) score += 15;
-    if (hasSkills) score += 20;
-    if (hasEducation) score += 15;
-    if (hasProjects) score += 15;
-    if (hasExperience) score += 10;
+    let score = 10;
+    if (hasName) score += 10;
+    if (hasEmail) score += 10;
+    if (hasSkills) score += 18;
+    if (hasEducation) score += 14;
+    if (hasProjects) score += 14;
+    if (hasExperience) score += 12;
     return Math.min(score, 100);
   }
 }
