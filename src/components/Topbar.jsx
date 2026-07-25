@@ -6,12 +6,21 @@ export default function Topbar() {
   const { role, setRole } = useRole()
   const navigate = useNavigate()
   const [dropdownOpen, setDropdownOpen] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(false)
 
   function switchRole(next) {
     setRole(next)
     setDropdownOpen(false)
     navigate(next === 'pro' ? '/' : '/discover')
+  }
+
+  let user = null
+  try { user = JSON.parse(localStorage.getItem('ct_user') || 'null') } catch { /* corrupt entry */ }
+  const displayName = user?.name || 'Rounith R.'
+
+  function logout() {
+    localStorage.removeItem('ct_token')
+    localStorage.removeItem('ct_user')
+    window.location.href = '/login'
   }
 
   return (
@@ -24,15 +33,6 @@ export default function Topbar() {
       </div>
 
       <div className="topbar-actions">
-        {/* Sun Icon for Theme Toggling */}
-        <button 
-          className="theme-toggle-btn" 
-          onClick={() => setIsDarkMode(!isDarkMode)}
-          title="Toggle Theme"
-        >
-          <i className={`ti ti-${isDarkMode ? 'moon' : 'sun'}`} />
-        </button>
-
         {/* Blue Notification Badge (3) */}
         <div className="notification-bell">
           <i className="ti ti-bell" />
@@ -41,9 +41,9 @@ export default function Topbar() {
 
         {/* User Profile Selector Dropdown */}
         <div className="profile-selector" onClick={() => setDropdownOpen(!dropdownOpen)}>
-          <div className="av">R</div>
+          <div className="av">{displayName.charAt(0).toUpperCase()}</div>
           <div className="profile-info">
-            <b>Rounith R.</b>
+            <b>{displayName}</b>
             <span>Student</span>
           </div>
           <i className={`ti ti-chevron-${dropdownOpen ? 'up' : 'down'} chevron`} />
@@ -66,6 +66,12 @@ export default function Topbar() {
               <hr />
               <button className="dropdown-item" onClick={() => navigate('/settings')}>
                 <i className="ti ti-settings" /> Settings
+              </button>
+              <button className="dropdown-item" onClick={() => navigate('/privacy')}>
+                <i className="ti ti-shield-lock" /> Privacy Policy
+              </button>
+              <button className="dropdown-item" onClick={logout} style={{ color: '#dc2626' }}>
+                <i className="ti ti-logout" /> Log out
               </button>
             </div>
           )}

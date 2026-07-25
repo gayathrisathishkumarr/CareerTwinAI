@@ -8,9 +8,12 @@ import Chat from './screens/Chat.jsx'
 import Setup from './screens/Setup.jsx'
 import Discover from './screens/Discover.jsx'
 import Candidate from './screens/Candidate.jsx'
-import Projects from './screens/Projects.jsx'
 import Resume from './screens/Resume.jsx'
 import GitHubSync from './screens/GitHubSync.jsx'
+import LearningPath from './screens/LearningPath.jsx'
+import JobMatches from './screens/JobMatches.jsx'
+import Login from './screens/Login.jsx'
+import Privacy from './screens/Privacy.jsx'
 
 const ComingSoon = ({ title, description, icon }) => {
   const navigate = useNavigate();
@@ -34,7 +37,7 @@ const ComingSoon = ({ title, description, icon }) => {
   )
 }
 
-export default function App() {
+function Shell() {
   return (
     <div className="app">
       <Sidebar />
@@ -45,29 +48,16 @@ export default function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/my-twin" element={<Setup />} />
             <Route path="/skills" element={<SkillAnalysis />} />
-            <Route path="/projects" element={<Projects />} />
             <Route path="/resume" element={<Resume />} />
             <Route path="/github" element={<GitHubSync />} />
-            <Route path="/learning-path" element={
-              <ComingSoon 
-                title="Learning Path" 
-                description="Personalized roadmap to bridge your skill gaps." 
-                icon="ti-route" 
-              />
-            } />
+            <Route path="/learning-path" element={<LearningPath />} />
             <Route path="/chat" element={<Chat />} />
-            <Route path="/job-matches" element={
-              <ComingSoon 
-                title="Job Matches" 
-                description="Discover roles matching your twin's verified skill signals." 
-                icon="ti-briefcase" 
-              />
-            } />
+            <Route path="/job-matches" element={<JobMatches />} />
             <Route path="/settings" element={
-              <ComingSoon 
-                title="Settings" 
-                description="Manage privacy, notifications, and integration settings." 
-                icon="ti-settings" 
+              <ComingSoon
+                title="Settings"
+                description="Manage privacy, notifications, and integration settings."
+                icon="ti-settings"
               />
             } />
             <Route path="/discover" element={<Discover />} />
@@ -77,5 +67,19 @@ export default function App() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function App() {
+  const authed = Boolean(localStorage.getItem('ct_token'))
+
+  return (
+    <Routes>
+      {/* Standalone pages — no app shell, reachable without signing in */}
+      <Route path="/login" element={authed ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/privacy" element={<Privacy />} />
+      {/* Everything else requires a signed-in session */}
+      <Route path="/*" element={authed ? <Shell /> : <Navigate to="/login" replace />} />
+    </Routes>
   )
 }
