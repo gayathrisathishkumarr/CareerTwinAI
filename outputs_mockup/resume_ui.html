@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<style>
+:root{
+  --bg:#f4f5fb; --panel:#ffffff; --ink:#141625; --ink2:#5a6076; --ink3:#8b90a6;
+  --line:#e7e9f2; --line2:#eef0f7;
+  --indigo:#4f46e5; --indigo-d:#3730a3; --indigo-soft:#eef0ff; --violet:#7c3aed;
+  --teal:#0ea5a4; --teal-d:#0d7a78; --teal-soft:#e2f7f5;
+  --coral:#f97316; --amber:#f59e0b; --green:#16a34a; --green-soft:#e6f6ec;
+  --radius:18px; --radius-s:12px;
+  --shadow:0 1px 2px rgba(20,22,37,.04), 0 10px 30px rgba(20,22,37,.05);
+  --shadow-lg:0 18px 50px rgba(79,70,229,.14);
+  --sans:"Liberation Sans","DejaVu Sans",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+svg.ic{width:1em;height:1em;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+
+/* ---------- Sidebar ---------- */
+.side{background:#0f1024;color:#c7c9e0;padding:22px 16px;display:flex;flex-direction:column;gap:5px}
+.brand{display:flex;align-items:center;gap:12px;padding:6px 8px 20px}
+.brand .mark{width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,#7c3aed,#4f46e5 55%,#0ea5a4);display:grid;place-items:center;position:relative;box-shadow:0 8px 20px rgba(79,70,229,.5);color:#fff;font-size:20px}
+.brand .mark::after{content:"";position:absolute;inset:7px;border-radius:8px;border:1.5px solid rgba(255,255,255,.55)}
+.brand b{color:#fff;font-size:17px;font-weight:700;display:block;line-height:1.15}
+.brand span{font-size:11px;color:#8f93bf;letter-spacing:.03em}
+.navlabel{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:#5b5e88;margin:14px 10px 8px;font-weight:700}
+.nav{display:flex;align-items:center;gap:12px;padding:10px 13px;border-radius:12px;color:#b9bcda;font-size:13.5px;font-weight:600;border:1px solid transparent}
+.nav .ic{font-size:19px;opacity:.85}
+.nav.on{background:linear-gradient(90deg,rgba(124,58,237,.32),rgba(79,70,229,.14));color:#fff;border-color:rgba(124,58,237,.4)}
+.nav .badge{margin-left:auto;font-size:10px;background:#22c55e;color:#052e16;font-weight:700;padding:2px 8px;border-radius:20px}
+.nav .keyc{margin-left:auto;font-size:9px;background:rgba(124,58,237,.35);color:#e9d5ff;font-weight:700;padding:2px 7px;border-radius:6px;letter-spacing:.05em}
+.side-promo{margin-top:auto;background:linear-gradient(135deg,#1e1b4b,#2e1085);border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,.08)}
+.side-promo .sp{width:30px;height:30px;background:rgba(255,255,255,.12);color:#fbbf24;border-radius:50%;display:grid;place-items:center;margin-bottom:10px;font-size:15px}
+.side-promo h4{color:#fff;font-size:13px;font-weight:700;margin-bottom:4px}
+.side-promo p{color:#cbd5e1;font-size:11px;line-height:1.4;margin-bottom:12px}
+.side-promo button{width:100%;background:#6366f1;color:#fff;border:none;font-size:11.5px;font-weight:700;padding:9px;border-radius:8px;cursor:pointer}
+.side-foot{display:flex;align-items:center;gap:10px;padding:11px;background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(255,255,255,.05);margin-top:12px}
+.side-foot .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0ea5a4,#4f46e5);display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px}
+.side-foot b{color:#fff;font-size:12.5px;font-weight:600;display:block}
+.side-foot small{color:#8f93bf;font-size:10.5px}
+
+/* ---------- Main ---------- */
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{background:rgba(244,245,251,.85);border-bottom:1px solid var(--line);padding:15px 34px;display:flex;align-items:center;gap:18px}
+.search{flex:1;max-width:440px;display:flex;align-items:center;gap:11px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:11px 15px;color:var(--ink3);font-size:13.5px}
+.search .ic{font-size:17px}
+.search .kbd{margin-left:auto;font-size:10.5px;background:#e9ebf4;color:#767c93;padding:2px 7px;border-radius:5px;font-weight:700}
+.topbar-actions{display:flex;align-items:center;gap:18px;margin-left:auto}
+.bell{position:relative;font-size:19px;color:#475569}
+.bell .dot{position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:#4f46e5;color:#fff;border-radius:50%;font-size:9px;font-weight:700;display:grid;place-items:center}
+.uprofile{display:flex;align-items:center;gap:10px}
+.uprofile .av{width:34px;height:34px;background:#6366f1;color:#fff;font-weight:700;font-size:13.5px;border-radius:50%;display:grid;place-items:center}
+.uprofile b{font-size:13px;color:#0f172a;font-weight:700;display:block;line-height:1.2}
+.uprofile small{font-size:11px;color:#64748b}
+
+.canvas{padding:28px 34px 50px}
+
+/* ---------- Page head ---------- */
+.page-h{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:24px;flex-wrap:wrap}
+.page-h h1{font-size:27px;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:12px}
+.page-h .chip-live{font-size:11.5px;font-weight:700;background:var(--green-soft);color:var(--green);padding:5px 11px;border-radius:20px;display:inline-flex;align-items:center;gap:6px}
+.page-h p{color:var(--ink2);font-size:14px;margin-top:6px}
+.head-actions{display:flex;gap:10px}
+.btn{font-size:13px;font-weight:700;border-radius:11px;padding:11px 17px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn .ic{font-size:16px}
+.btn.pri{background:linear-gradient(135deg,#6d5cf0,#4f46e5);border:none;color:#fff;box-shadow:0 8px 20px rgba(79,70,229,.35)}
+.btn.ghost{color:#dc2626;border-color:#f3d4d4;background:#fff}
+
+/* ---------- Cards ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.pad{padding:24px}
+.grid{display:grid;gap:22px}
+.sec-t{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.sec-t .ic{color:var(--indigo);font-size:20px}
+.sec-t h3{font-size:16px;font-weight:700}
+.sec-t .count{margin-left:auto;font-size:11.5px;font-weight:700;color:var(--green);background:var(--green-soft);padding:3px 10px;border-radius:20px}
+.eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+
+/* ---------- HERO score card ---------- */
+.hero{display:grid;grid-template-columns:1.35fr 1fr;gap:0;overflow:hidden;position:relative}
+.hero-left{padding:26px 28px;display:flex;flex-direction:column;gap:22px}
+.file-row{display:flex;gap:18px;align-items:center}
+.file-thumb{width:74px;height:96px;border-radius:12px;background:linear-gradient(160deg,#fff,#f3f4fd);border:1px solid var(--line);padding:9px;display:flex;flex-direction:column;justify-content:space-between;flex-shrink:0;box-shadow:0 6px 16px rgba(20,22,37,.08)}
+.file-thumb .lines{display:flex;flex-direction:column;gap:5px}
+.file-thumb .lines i{display:block;height:4px;border-radius:2px;background:#dfe2f0}
+.file-thumb .lines i:first-child{background:var(--indigo);width:100%}
+.file-thumb .lines i:nth-child(2){width:72%}
+.file-thumb .lines i:nth-child(3){width:88%}
+.file-thumb .lines i:nth-child(4){width:60%}
+.file-thumb .tag{font-size:9.5px;font-weight:800;color:#fff;background:var(--indigo);padding:2px 7px;border-radius:5px;width:fit-content;letter-spacing:.04em}
+.file-name{font-size:16px;font-weight:700;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.pill-active{font-size:10px;font-weight:700;background:var(--green-soft);color:var(--green);padding:3px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:5px}
+.synced{display:flex;align-items:center;gap:7px;color:var(--green);font-size:13px;font-weight:600;margin-top:6px}
+.meta-lines{display:flex;flex-direction:column;gap:7px;margin-top:12px;font-size:12.5px;color:var(--ink2)}
+.meta-lines .row{display:flex;align-items:center;gap:9px}
+.meta-lines .row .ic{color:var(--ink3);font-size:15px}
+.meta-lines strong{color:var(--ink);font-weight:700}
+.grounded{color:var(--teal-d);font-weight:700}
+
+.substats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.substat{background:#f8f9fe;border:1px solid var(--line);border-radius:13px;padding:13px 14px}
+.substat .k{font-size:11px;color:var(--ink3);font-weight:700;display:flex;align-items:center;gap:6px;letter-spacing:.02em}
+.substat .k .ic{color:var(--indigo);font-size:14px}
+.substat .v{font-size:19px;font-weight:800;margin-top:7px;letter-spacing:-.02em}
+.substat .v small{font-size:11px;color:var(--green);font-weight:700;margin-left:3px}
+.substat.good .v{color:var(--green)}
+
+.hero-right{background:linear-gradient(160deg,#f6f5ff 0%,#eef4ff 60%,#ecfbfa 100%);border-left:1px solid var(--line);padding:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative}
+.hero-right .eyebrow{margin-bottom:6px}
+.ring-wrap{position:relative;width:180px;height:180px}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-center .num{font-size:44px;font-weight:800;letter-spacing:-.03em;background:linear-gradient(135deg,#7c3aed,#4f46e5);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+.ring-center .lbl{font-size:12px;font-weight:700;color:var(--indigo);margin-top:3px}
+.ring-center .of{font-size:10.5px;color:var(--ink3);font-weight:600}
+.percentile{margin-top:14px;display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);padding:8px 14px;border-radius:20px;font-size:12px;font-weight:700;color:var(--indigo);box-shadow:0 4px 12px rgba(79,70,229,.1)}
+.percentile .ic{font-size:15px}
+
+/* ---------- AI analysis card ---------- */
+.ai-card{padding:24px;display:flex;flex-direction:column}
+.ai-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px dashed var(--line2)}
+.ai-row:last-of-type{border-bottom:none}
+.ai-row .lab{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink2);font-weight:600}
+.ai-row .lab .ic{color:var(--indigo);font-size:16px}
+.badge-strong{background:var(--green-soft);color:var(--green);font-size:11.5px;font-weight:800;padding:4px 11px;border-radius:20px}
+.ai-row .val{font-size:14px;font-weight:800;color:var(--ink)}
+.bar-block{padding:12px 0 4px}
+.bar-block .top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:8px}
+.bar-block .top .l{color:var(--ink2);font-weight:600;display:flex;align-items:center;gap:8px}
+.bar-block .top .l .ic{color:var(--indigo);font-size:15px}
+.bar-block .top .p{font-weight:800;color:var(--indigo)}
+.track{height:8px;border-radius:6px;background:var(--line2);overflow:hidden}
+.fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#7c3aed,#4f46e5)}
+.fill.teal{background:linear-gradient(90deg,#0ea5a4,#22c9c6)}
+
+/* ---------- Extracted info ---------- */
+.info-grid{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:22px;margin-bottom:22px}
+.info-grid h4{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;font-weight:800;display:flex;align-items:center;gap:6px}
+.info-grid h4 .ic{font-size:14px;color:var(--indigo)}
+.detail{display:flex;flex-direction:column;gap:12px;font-size:13px}
+.detail .row{display:flex;align-items:center;gap:10px}
+.detail .row .ic{color:var(--ink3);font-size:16px;width:18px}
+.detail .row .k{color:var(--ink3);width:58px;font-weight:600}
+.detail .row .vv{color:var(--ink);font-weight:600}
+.detail .row a{color:var(--indigo);font-weight:700}
+.info-box{background:linear-gradient(160deg,#f8f9fe,#f2f4fc);padding:16px;border-radius:13px;border:1px solid var(--line)}
+.info-box .t{font-size:13.5px;color:var(--ink);font-weight:700;display:block}
+.info-box .s{font-size:12.5px;color:var(--ink2);display:block;margin-top:3px}
+.info-box .d{font-size:11.5px;color:var(--ink3);display:block;margin-top:5px}
+.info-box .chip{display:inline-flex;align-items:center;gap:5px;margin-top:11px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.indigo{background:var(--indigo-soft);color:var(--indigo)}
+.preview{padding-top:20px;border-top:1px solid var(--line)}
+.preview h4{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-weight:800;display:flex;align-items:center;gap:6px}
+.preview h4 .ic{color:var(--indigo);font-size:14px}
+.preview .code{padding:15px 17px;background:#0f1024;border-radius:12px;font-family:"DejaVu Sans Mono",monospace;font-size:12px;color:#c7c9e0;line-height:1.7}
+.preview .code .hl{color:#a5b4fc;font-weight:700}
+.preview .code .gr{color:#5eead4}
+
+/* ---------- Skills ---------- */
+.skills-list{display:flex;flex-direction:column;gap:13px}
+.skill{display:flex;flex-direction:column;gap:7px}
+.skill .top{display:flex;align-items:center;gap:9px}
+.skill .badge-ic{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:800;flex-shrink:0}
+.skill .nm{font-size:13px;font-weight:700;color:var(--ink)}
+.skill .lvl{margin-left:auto;font-size:10.5px;font-weight:700;color:var(--ink3)}
+.skill .verified{color:var(--green);display:inline-flex;align-items:center;font-size:15px}
+.skill .track{height:6px}
+.skill .fill{background:linear-gradient(90deg,#7c3aed,#4f46e5)}
+.more-skills{margin-top:16px;display:flex;flex-wrap:wrap;gap:7px}
+.more-skills span{font-size:11px;font-weight:700;background:#f1f2f9;color:#4a4f68;padding:5px 11px;border-radius:8px}
+.skills-foot{margin-top:16px;padding-top:15px;border-top:1px solid var(--line);display:flex;align-items:center;gap:9px;font-size:12px;color:var(--ink2);font-weight:600}
+.skills-foot .ic{color:var(--teal);font-size:16px}
+
+.mt22{margin-top:22px}
+.two-col{display:grid;grid-template-columns:1fr 360px;gap:22px;align-items:start}
+</style>
+</head>
+<body>
+<!-- SVG icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></symbol>
+<symbol id="i-github" viewBox="0 0 24 24"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+<symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M12 19h4.5a2.5 2.5 0 0 0 0-5h-8a2.5 2.5 0 0 1 0-5H12"/></symbol>
+<symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5-5 5 5"/><path d="M12 5v13"/></symbol>
+<symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+<symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-check-c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
+<symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+<symbol id="i-cap" viewBox="0 0 24 24"><path d="M2 9l10-4 10 4-10 4z"/><path d="M6 11v5c0 1 2.7 3 6 3s6-2 6-3v-5"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></symbol>
+<symbol id="i-sync" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></symbol>
+<symbol id="i-code" viewBox="0 0 24 24"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M13 5l-2 14"/></symbol>
+<symbol id="i-arrow-ur" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.9 6 6.1.9-4.5 4.3 1 6.1L12 18l-5.5 2.3 1-6.1L3 9.9 9.1 9z"/></symbol>
+</defs></svg>
+
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="side">
+    <div class="brand">
+      <div class="mark"><svg class="ic" style="stroke-width:2.4"><use href="#i-grid"/></svg></div>
+      <div><b>CareerTwin AI</b><span>Your AI Career Twin</span></div>
+    </div>
+    <div class="navlabel">Overview</div>
+    <div class="nav"><svg class="ic"><use href="#i-grid"/></svg>Dashboard</div>
+    <div class="nav on"><svg class="ic"><use href="#i-file"/></svg>Resume</div>
+    <div class="nav"><svg class="ic"><use href="#i-github"/></svg>GitHub</div>
+    <div class="navlabel">Intelligence</div>
+    <div class="nav"><svg class="ic"><use href="#i-target"/></svg>Skill Analysis</div>
+    <div class="nav"><svg class="ic"><use href="#i-route"/></svg>Learning Path</div>
+    <div class="nav"><svg class="ic"><use href="#i-briefcase"/></svg>Job Matches<span class="badge">3</span></div>
+    <div class="nav"><svg class="ic"><use href="#i-chat"/></svg>AI Mentor Chat<span class="keyc">KEY</span></div>
+    <div class="side-promo">
+      <div class="sp"><svg class="ic"><use href="#i-star"/></svg></div>
+      <h4>Get better matches</h4>
+      <p>Complete your skills profile and projects to boost match accuracy.</p>
+      <button>Improve Profile →</button>
+    </div>
+    <div class="side-foot">
+      <div class="av">R</div>
+      <div><b>Rounith R.</b><small>Student</small></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="search"><svg class="ic"><use href="#i-search"/></svg>Search skills, projects, roles…<span class="kbd">⌘K</span></div>
+      <div class="topbar-actions">
+        <div class="bell"><svg class="ic"><use href="#i-bell"/></svg><span class="dot">3</span></div>
+        <div class="uprofile"><div class="av">R</div><div><b>Rounith R.</b><small>Student</small></div></div>
+      </div>
+    </div>
+
+    <div class="canvas">
+      <!-- Page head -->
+      <div class="page-h">
+        <div>
+          <h1>Resume Sync <span class="chip-live"><svg class="ic"><use href="#i-check"/></svg>Up to date</span></h1>
+          <p>Upload and cross-reference your PDF resume with your AI twin.</p>
+        </div>
+        <div class="head-actions">
+          <button class="btn pri"><svg class="ic"><use href="#i-upload"/></svg>Re-upload Resume</button>
+          <button class="btn ghost"><svg class="ic"><use href="#i-reset"/></svg>Reset</button>
+        </div>
+      </div>
+
+      <!-- HERO + AI analysis -->
+      <div class="two-col">
+        <div class="card hero">
+          <div class="hero-left">
+            <div class="file-row">
+              <div class="file-thumb">
+                <div class="lines"><i></i><i></i><i></i><i></i></div>
+                <span class="tag">PDF</span>
+              </div>
+              <div>
+                <div class="file-name">CareerTwin_AI_Resume.pdf <span class="pill-active"><svg class="ic"><use href="#i-check"/></svg>Active</span></div>
+                <div class="synced"><svg class="ic"><use href="#i-check-c"/></svg>Text extracted &amp; synced</div>
+                <div class="meta-lines">
+                  <div class="row"><svg class="ic"><use href="#i-cal"/></svg>Uploaded: <strong>Just now</strong></div>
+                  <div class="row"><svg class="ic"><use href="#i-sync"/></svg>Sync status: <span class="grounded">● Grounded in AI Twin</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="substats">
+              <div class="substat"><div class="k"><svg class="ic"><use href="#i-cpu"/></svg>ATS Parsing</div><div class="v good" style="color:var(--green)">100%<small>Pass</small></div></div>
+              <div class="substat"><div class="k"><svg class="ic"><use href="#i-target"/></svg>Role Match</div><div class="v">96%<small style="color:var(--indigo)">Fit</small></div></div>
+              <div class="substat"><div class="k"><svg class="ic"><use href="#i-trend"/></svg>Percentile</div><div class="v">Top 4%</div></div>
+            </div>
+          </div>
+          <div class="hero-right">
+            <span class="eyebrow">Career Resume Score</span>
+            <div class="ring-wrap">
+              <svg viewBox="0 0 180 180" width="180" height="180">
+                <defs><linearGradient id="grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#4f46e5"/></linearGradient></defs>
+                <circle cx="90" cy="90" r="78" fill="none" stroke="#e7e9f2" stroke-width="13"/>
+                <circle cx="90" cy="90" r="78" fill="none" stroke="url(#grad)" stroke-width="13" stroke-linecap="round"
+                  stroke-dasharray="490" stroke-dashoffset="19.6" transform="rotate(-90 90 90)"/>
+              </svg>
+              <div class="ring-center">
+                <div class="num">96</div>
+                <div class="lbl">Excellent</div>
+                <div class="of">out of 100</div>
+              </div>
+            </div>
+            <div class="percentile"><svg class="ic"><use href="#i-trend"/></svg>Top 4% of candidates</div>
+          </div>
+        </div>
+
+        <!-- AI analysis -->
+        <div class="card ai-card">
+          <div class="sec-t"><svg class="ic"><use href="#i-sparkles"/></svg><h3>AI Resume Analysis</h3></div>
+          <div class="ai-row"><span class="lab"><svg class="ic"><use href="#i-shield"/></svg>Overall Strength</span><span class="badge-strong">Strong</span></div>
+          <div class="ai-row"><span class="lab"><svg class="ic"><use href="#i-briefcase"/></svg>Years of Experience</span><span class="val">1+ years</span></div>
+          <div class="bar-block">
+            <div class="top"><span class="l"><svg class="ic"><use href="#i-chart"/></svg>Career Readiness</span><span class="p">98%</span></div>
+            <div class="track"><div class="fill" style="width:98%"></div></div>
+          </div>
+          <div class="bar-block">
+            <div class="top"><span class="l"><svg class="ic"><use href="#i-file"/></svg>Resume Quality</span><span class="p">92%</span></div>
+            <div class="track"><div class="fill teal" style="width:92%"></div></div>
+          </div>
+          <div class="bar-block">
+            <div class="top"><span class="l"><svg class="ic"><use href="#i-target"/></svg>Keyword Coverage</span><span class="p">88%</span></div>
+            <div class="track"><div class="fill" style="width:88%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Extracted info + Skills -->
+      <div class="two-col mt22">
+        <div class="card pad">
+          <div class="sec-t"><svg class="ic"><use href="#i-user"/></svg><h3>Extracted Information</h3></div>
+          <div class="info-grid">
+            <div>
+              <h4>Personal Details</h4>
+              <div class="detail">
+                <div class="row"><svg class="ic"><use href="#i-user"/></svg><span class="k">Name</span><span class="vv">Rounith Rathesh</span></div>
+                <div class="row"><svg class="ic"><use href="#i-mail"/></svg><span class="k">Email</span><span class="vv">rounithr@email.com</span></div>
+                <div class="row"><svg class="ic"><use href="#i-phone"/></svg><span class="k">Phone</span><span class="vv">+91 98765 43210</span></div>
+                <div class="row"><svg class="ic"><use href="#i-pin"/></svg><span class="k">Location</span><span class="vv">Chennai, India</span></div>
+                <div class="row"><svg class="ic"><use href="#i-github"/></svg><span class="k">GitHub</span><a>rounithrathesh-coder <svg class="ic" style="font-size:11px"><use href="#i-arrow-ur"/></svg></a></div>
+              </div>
+            </div>
+            <div>
+              <h4><svg class="ic"><use href="#i-cap"/></svg>Education</h4>
+              <div class="info-box">
+                <span class="t">B.Tech — Computer Science</span>
+                <span class="s">Rajalakshmi Engineering College</span>
+                <span class="d">2024 – 2028 (Expected)</span>
+                <span class="chip green"><svg class="ic"><use href="#i-star"/></svg>CGPA 8.45 / 10</span>
+              </div>
+            </div>
+            <div>
+              <h4><svg class="ic"><use href="#i-briefcase"/></svg>Experience</h4>
+              <div class="info-box">
+                <span class="t">Web Development Intern</span>
+                <span class="s">CodeAlpha</span>
+                <span class="d">May 2025 – Jun 2025</span>
+                <span class="chip indigo">2 Months</span>
+              </div>
+            </div>
+          </div>
+          <div class="preview">
+            <h4><svg class="ic"><use href="#i-code"/></svg>Extracted Text Preview</h4>
+            <div class="code"><span class="hl">PROFESSIONAL SUMMARY</span> — Enthusiastic Computer Science Engineering student with hands-on experience in <span class="gr">full-stack web development</span>, AI/ML concepts, and practical problem-solving. Passionate about building user-focused applications and learning modern technologies.  <span class="hl">SKILLS:</span> JavaScript, Python, React.js, Node.js, MongoDB…</div>
+          </div>
+        </div>
+
+        <!-- Skills -->
+        <div class="card pad">
+          <div class="sec-t"><svg class="ic"><use href="#i-code"/></svg><h3>Extracted Skills</h3><span class="count">17 verified</span></div>
+          <div class="skills-list">
+            <div class="skill"><div class="top"><span class="badge-ic" style="background:#f7df1e;color:#000">JS</span><span class="nm">JavaScript</span><span class="lvl">Advanced</span><span class="verified"><svg class="ic"><use href="#i-check-c"/></svg></span></div><div class="track"><div class="fill" style="width:90%"></div></div></div>
+            <div class="skill"><div class="top"><span class="badge-ic" style="background:#61dafb;color:#053">Re</span><span class="nm">React.js</span><span class="lvl">Advanced</span><span class="verified"><svg class="ic"><use href="#i-check-c"/></svg></span></div><div class="track"><div class="fill" style="width:86%"></div></div></div>
+            <div class="skill"><div class="top"><span class="badge-ic" style="background:#3c873a">No</span><span class="nm">Node.js</span><span class="lvl">Intermediate</span><span class="verified"><svg class="ic"><use href="#i-check-c"/></svg></span></div><div class="track"><div class="fill" style="width:74%"></div></div></div>
+            <div class="skill"><div class="top"><span class="badge-ic" style="background:#4db33d">Mo</span><span class="nm">MongoDB</span><span class="lvl">Intermediate</span><span class="verified"><svg class="ic"><use href="#i-check-c"/></svg></span></div><div class="track"><div class="fill" style="width:70%"></div></div></div>
+            <div class="skill"><div class="top"><span class="badge-ic" style="background:#3776ab">Py</span><span class="nm">Python</span><span class="lvl">Intermediate</span><span class="verified"><svg class="ic"><use href="#i-check-c"/></svg></span></div><div class="track"><div class="fill" style="width:72%"></div></div></div>
+            <div class="skill"><div class="top"><span class="badge-ic" style="background:#111">Fl</span><span class="nm">Flask</span><span class="lvl">Beginner</span><span class="verified"><svg class="ic"><use href="#i-check-c"/></svg></span></div><div class="track"><div class="fill" style="width:58%"></div></div></div>
+          </div>
+          <div class="more-skills">
+            <span>Machine Learning</span><span>Tailwind CSS</span><span>Git</span><span>HTML5</span><span>REST APIs</span><span>+6 more</span>
+          </div>
+          <div class="skills-foot"><svg class="ic"><use href="#i-lock"/></svg>Your data stays private &amp; encrypted</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
