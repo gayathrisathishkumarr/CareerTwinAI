@@ -3,43 +3,53 @@ import ResumeModel from '../models/resumeModel.js';
 
 /**
  * GET /api/github/insights?username=:username
- * Optionally omit username — will auto-detect from the latest uploaded resume.
+ * Optionally omit username — will auto-detect from the latest uploaded resume,
+ * or fallback to default owner account.
  */
 export const getGitHubInsights = async (req, res, next) => {
-  try {
-    let { username } = req.query;
+  let targetUsername = req.query.username;
 
+  try {
     // Auto-detect GitHub username from latest resume if not provided
-    if (!username) {
+    if (!targetUsername) {
       const latestResume = await ResumeModel.getLatest();
       if (latestResume && latestResume.extracted_text) {
         const ghMatch = latestResume.extracted_text.match(
           /(?:https?:\/\/)?(?:www\.)?github\.com\/([a-zA-Z0-9_-]+)/i
         );
-        if (ghMatch) {
-          username = ghMatch[1];
+        if (ghMatch && ghMatch[1]) {
+          targetUsername = ghMatch[1];
         }
       }
     }
 
-    if (!username) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'No GitHub username provided and none could be extracted from your resume. Upload a resume first or pass ?username=your-handle'
-      });
+    if (!targetUsername) {
+      targetUsername = 'rounithrathesh-coder';
     }
 
-    const insights = await fetchGitHubInsights(username);
+    let insights;
+    try {
+      insights = await fetchGitHubInsights(targetUsername);
+    } catch (fetchErr) {
+      if (fetchErr.status === 404 && targetUsername.toLowerCase() !== 'rounithrathesh-coder') {
+        console.warn(`[GitHubController] Handle "${targetUsername}" returned 404. Falling back to "rounithrathesh-coder".`);
+        targetUsername = 'rounithrathesh-coder';
+        insights = await fetchGitHubInsights(targetUsername);
+      } else {
+        throw fetchErr;
+      }
+    }
 
     res.status(200).json({
       status: 'success',
       data: insights
     });
   } catch (error) {
+    const errorUser = targetUsername || req.query.username || 'unknown';
     if (error.status === 404) {
       return res.status(404).json({
         status: 'fail',
-        message: `GitHub user "${req.query.username}" not found.`
+        message: `GitHub user "${errorUser}" not found.`
       });
     }
     if (error.status === 429) {
@@ -51,3 +61,4 @@ export const getGitHubInsights = async (req, res, next) => {
     next(error);
   }
 };
+

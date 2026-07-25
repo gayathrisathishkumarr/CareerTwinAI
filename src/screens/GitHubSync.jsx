@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Ring from '../components/Ring.jsx'
 
 // Language color palette
@@ -8,6 +9,7 @@ const LANG_COLORS = [
 ]
 
 export default function GitHubSync() {
+  const navigate = useNavigate()
   const [isManualInput, setIsManualInput] = useState(false)
   const [inputUrl, setInputUrl] = useState('')
   const [manualUsername, setManualUsername] = useState('')
@@ -16,13 +18,14 @@ export default function GitHubSync() {
   const [error, setError] = useState('')
   const [insights, setInsights] = useState(null)
   const [lastSynced, setLastSynced] = useState(null)
+  const [avatarError, setAvatarError] = useState(false)
 
   const fetchInsights = useCallback((username = '') => {
     setLoading(true)
     setError('')
     const url = username
       ? `http://localhost:5001/api/github/insights?username=${encodeURIComponent(username)}`
-      : 'http://localhost:5001/api/github/insights'
+      : 'http://localhost:5001/api/github/insights?username=rounithrathesh-coder'
 
     fetch(url)
       .then((res) => res.json())
@@ -30,7 +33,11 @@ export default function GitHubSync() {
         setLoading(false)
         if (res.status === 'success' && res.data) {
           setInsights(res.data)
+          setAvatarError(false)
           setLastSynced(new Date())
+        } else if (res.status === 'no_resume') {
+          setInsights(null)
+          setError('')
         } else {
           setError(res.message || 'Failed to load GitHub insights.')
         }
@@ -150,6 +157,96 @@ export default function GitHubSync() {
         </div>
       )}
 
+      {/* ZERO STATE: Display zero values before resume PDF upload */}
+      {!loading && !insights && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* Top 4 Zero KPI Cards */}
+          <div className="grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+            <div className="card pad" style={{ padding: '16px 18px' }}>
+              <span className="eyebrow" style={{ fontSize: '10.5px', color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block' }}>VERIFIED REPOS</span>
+              <b style={{ fontSize: '22px', color: 'var(--ink3)', display: 'block', marginTop: '2px' }}>0</b>
+              <span style={{ fontSize: '11.5px', color: 'var(--ink3)' }}>Unlinked</span>
+            </div>
+
+            <div className="card pad" style={{ padding: '16px 18px' }}>
+              <span className="eyebrow" style={{ fontSize: '10.5px', color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block' }}>TOTAL COMMITS</span>
+              <b style={{ fontSize: '22px', color: 'var(--ink3)', display: 'block', marginTop: '2px' }}>0</b>
+              <span style={{ fontSize: '11.5px', color: 'var(--ink3)' }}>No commit logs</span>
+            </div>
+
+            <div className="card pad" style={{ padding: '16px 18px' }}>
+              <span className="eyebrow" style={{ fontSize: '10.5px', color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block' }}>QUALITY SCORE</span>
+              <b style={{ fontSize: '22px', color: 'var(--ink3)', display: 'block', marginTop: '2px' }}>0%</b>
+              <span style={{ fontSize: '11.5px', color: 'var(--ink3)' }}>Pending analysis</span>
+            </div>
+
+            <div className="card pad" style={{ padding: '16px 18px' }}>
+              <span className="eyebrow" style={{ fontSize: '10.5px', color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block' }}>TOP SKILL</span>
+              <b style={{ fontSize: '22px', color: 'var(--ink3)', display: 'block', marginTop: '2px' }}>-</b>
+              <span style={{ fontSize: '11.5px', color: 'var(--ink3)' }}>No language detected</span>
+            </div>
+          </div>
+
+          {/* Prominent CTA Dropzone Banner */}
+          <div
+            className="card"
+            style={{
+              padding: '50px 32px',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '18px',
+              borderRadius: '20px',
+              background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.04), rgba(79, 70, 229, 0.02))',
+              border: '2px dashed rgba(124, 58, 237, 0.35)'
+            }}
+          >
+            <div
+              style={{
+                width: '72px',
+                height: '72px',
+                borderRadius: '20px',
+                background: 'var(--indigo-soft)',
+                color: 'var(--indigo)',
+                display: 'grid',
+                placeItems: 'center',
+                fontSize: '34px',
+                boxShadow: '0 8px 24px rgba(124, 58, 237, 0.15)'
+              }}
+            >
+              <i className="ti ti-brand-github" />
+            </div>
+
+            <div style={{ maxWidth: '500px' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
+                GitHub Profile Unlinked
+              </h2>
+              <p style={{ fontSize: '13.5px', color: 'var(--ink2)', marginTop: '8px', lineHeight: 1.5 }}>
+                Upload your PDF resume on the Resume page to automatically extract your GitHub handle, or connect your account manually below to sync live repositories.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '4px' }}>
+              <button
+                className="btn pri"
+                style={{ padding: '14px 28px', fontSize: '14.5px', borderRadius: '12px', boxShadow: '0 6px 20px rgba(124, 58, 237, 0.35)' }}
+                onClick={() => navigate('/resume')}
+              >
+                <i className="ti ti-file-upload" style={{ fontSize: '18px' }} /> Go to Resume Page to Upload PDF
+              </button>
+              <button
+                className="btn"
+                style={{ padding: '14px 24px', fontSize: '14.5px', borderRadius: '12px' }}
+                onClick={() => setIsManualInput(true)}
+              >
+                <i className="ti ti-brand-github" /> Connect Manually
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {!loading && insights && (
         <>
           {/* Section 1: GitHub Profile Card */}
@@ -166,25 +263,29 @@ export default function GitHubSync() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px' }}>
               {/* Avatar & Info */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                {profile?.avatar ? (
+                {profile?.avatar && !avatarError ? (
                   <img
                     src={profile.avatar}
-                    alt={profile.username}
+                    alt={profile.username || 'GitHub Avatar'}
+                    onError={() => setAvatarError(true)}
                     style={{
-                      width: '56px',
-                      height: '56px',
+                      width: '60px',
+                      height: '60px',
                       borderRadius: '50%',
-                      border: '2px solid var(--line)',
-                      boxShadow: '0 4px 12px rgba(15,16,36,0.15)'
+                      border: '2px solid var(--indigo)',
+                      objectFit: 'cover',
+                      boxShadow: '0 4px 14px rgba(79,70,229,0.2)',
+                      flexShrink: 0
                     }}
                   />
                 ) : (
                   <div style={{
-                    width: '56px', height: '56px', borderRadius: '50%',
-                    background: '#0f1024', color: '#fff', display: 'grid',
-                    placeItems: 'center', fontSize: '28px'
+                    width: '60px', height: '60px', borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', color: '#fff', display: 'grid',
+                    placeItems: 'center', fontSize: '26px', fontWeight: 600,
+                    boxShadow: '0 4px 14px rgba(79,70,229,0.25)', flexShrink: 0
                   }}>
-                    <i className="ti ti-brand-github" />
+                    {profile?.username ? profile.username.charAt(0).toUpperCase() : <i className="ti ti-brand-github" />}
                   </div>
                 )}
                 <div>
@@ -193,7 +294,7 @@ export default function GitHubSync() {
                       {profile?.name || profile?.username}
                     </h3>
                     <span className="chip" style={{ fontSize: '11px', background: 'var(--indigo-soft)', color: 'var(--indigo)' }}>
-                      {manualUsername ? 'Manual Entry' : 'Extracted from resume'}
+                      {manualUsername ? 'Manual Entry' : 'Live GitHub Account'}
                     </span>
                   </div>
                   {profile?.bio && (
@@ -244,54 +345,95 @@ export default function GitHubSync() {
             {/* AI Coding Summary */}
             <div className="card pad" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
-                <div className="sec-t" style={{ marginBottom: '18px' }}>
+                <div className="sec-t" style={{ marginBottom: '20px' }}>
                   <i className="ti ti-sparkles" style={{ color: 'var(--indigo)' }} />
                   <h3>AI Coding Summary</h3>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '24px', alignItems: 'center' }}>
-                  <Ring
-                    value={Math.min(100, Math.round(30 + (stats?.totalRepos || 0) * 1.5 + (stats?.totalStars || 0) * 0.5))}
-                    size={135}
-                    thickness={12}
-                    color="var(--indigo)"
-                    track="var(--line)"
-                    inner="#fff"
-                    label="Overall Score"
-                    valueColor="var(--indigo)"
-                    labelColor="var(--ink3)"
-                    suffix="/100"
-                  />
-                  <div>
-                    <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--indigo)', marginBottom: '6px' }}>
-                      {languages[0]?.language || 'Developer'} Specialist
-                    </h4>
-                    <div style={{ display: 'flex', gap: '3px', color: '#f59e0b', marginBottom: '16px' }}>
-                      {[1,2,3,4].map(i => <i key={i} className="ti ti-star-filled" />)}
-                      <i className="ti ti-star" style={{ color: '#d1d5db' }} />
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '12.5px' }}>
-                      <div>
-                        <span className="eyebrow" style={{ fontSize: '10.5px', color: '#16a34a', marginBottom: '8px', display: 'block' }}>
-                          Top Strengths
+                <div style={{ display: 'grid', gridTemplateColumns: '130px 1fr', gap: '24px', alignItems: 'center' }}>
+                  {/* Score Ring Container */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', paddingRight: '20px', borderRight: '1px solid var(--line)' }}>
+                    <Ring
+                      value={Math.min(100, Math.round(30 + (stats?.totalRepos || 0) * 1.5 + (stats?.totalStars || 0) * 0.5))}
+                      size={120}
+                      thickness={11}
+                      color="var(--indigo)"
+                      track="var(--line)"
+                      inner="#fff"
+                      label="Overall Score"
+                      valueColor="var(--indigo)"
+                      labelColor="var(--ink3)"
+                      suffix=""
+                    />
+                    <span className="chip" style={{ fontSize: '10.5px', background: 'var(--indigo-soft)', color: 'var(--indigo)', fontWeight: 600, marginTop: '4px' }}>
+                      {Math.min(100, Math.round(30 + (stats?.totalRepos || 0) * 1.5 + (stats?.totalStars || 0) * 0.5))} / 100
+                    </span>
+                  </div>
+
+                  {/* Specialist & Details Container */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    {/* Header Row */}
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                        <h4 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--indigo)', margin: 0 }}>
+                          {languages[0]?.language || 'Developer'} Specialist
+                        </h4>
+                        <span className="chip ver" style={{ background: '#e6f6ec', color: '#16a34a', fontSize: '11px', fontWeight: 600 }}>
+                          <i className="ti ti-circle-check-filled" /> Active Signals
                         </span>
-                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '6px', color: 'var(--ink2)' }}>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+                        <div style={{ display: 'flex', gap: '3px', color: '#f59e0b', fontSize: '14px' }}>
+                          {[1, 2, 3, 4].map(i => <i key={i} className="ti ti-star-filled" />)}
+                          <i className="ti ti-star" style={{ color: '#cbd5e1' }} />
+                        </div>
+                        <span style={{ fontSize: '12px', color: 'var(--ink3)', fontWeight: 500 }}>
+                          4.0 Rating
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Sub-grid: Top Strengths & Top Repos */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', paddingTop: '10px', borderTop: '1px solid var(--line)', fontSize: '12.5px' }}>
+                      {/* Top Strengths */}
+                      <div>
+                        <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--ink3)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <i className="ti ti-code" style={{ color: '#16a34a', fontSize: '13px' }} /> TOP STRENGTHS
+                        </span>
+                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', color: 'var(--ink2)' }}>
                           {languages.slice(0, 4).map((l) => (
-                            <li key={l.language} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              <i className="ti ti-circle-check-filled" style={{ color: '#16a34a' }} /> {l.language}
+                            <li key={l.language} style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '13px', fontWeight: 500 }}>
+                              <i className="ti ti-circle-check-filled" style={{ color: '#16a34a', fontSize: '14px', flexShrink: 0 }} />
+                              <span style={{ color: 'var(--ink)' }}>{l.language}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
+
+                      {/* Top Repos */}
                       <div>
-                        <span className="eyebrow" style={{ fontSize: '10.5px', color: 'var(--ink3)', marginBottom: '8px', display: 'block' }}>
-                          Top Repos
+                        <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--ink3)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <i className="ti ti-git-branch" style={{ color: 'var(--indigo)', fontSize: '13px' }} /> TOP REPOS
                         </span>
-                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '6px', color: 'var(--ink2)' }}>
+                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', color: 'var(--ink2)' }}>
                           {topRepos.slice(0, 4).map((r) => (
-                            <li key={r.name} style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
-                              <i className="ti ti-git-branch" style={{ color: 'var(--indigo)', flexShrink: 0 }} />
-                              <a href={r.url} target="_blank" rel="noreferrer" style={{ color: 'var(--ink2)', textDecoration: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <li key={r.name} style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '13px', overflow: 'hidden' }}>
+                              <i className="ti ti-git-branch" style={{ color: 'var(--indigo)', flexShrink: 0, fontSize: '13px' }} />
+                              <a
+                                href={r.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                style={{
+                                  color: 'var(--ink)',
+                                  fontWeight: 500,
+                                  textDecoration: 'none',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap'
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.color = 'var(--indigo)'}
+                                onMouseLeave={e => e.currentTarget.style.color = 'var(--ink)'}
+                              >
                                 {r.name}
                               </a>
                             </li>
