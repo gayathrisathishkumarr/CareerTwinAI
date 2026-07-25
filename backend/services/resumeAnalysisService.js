@@ -143,16 +143,25 @@ export class ResumeAnalysisService {
     for (const [category, keywords] of Object.entries(SKILL_DICTIONARY)) {
       const found = new Set();
       for (const kw of keywords) {
-        const cleanKw = kw.replace(/\\\\/g, '').replace(/\\b/g, '');
-        const regex = new RegExp(kw.startsWith('\\b') || kw.endsWith('\\b') ? kw : `\\b${kw}\\b`, 'i');
-        if (regex.test(text)) {
-          found.add(cleanKw.replace(/\\/g, ''));
+        const cleanKw = kw.replace(/\\b/g, '').replace(/\\/g, '');
+        if (this.matchesKeyword(text, cleanKw)) {
+          found.add(cleanKw);
         }
       }
       extracted[category] = Array.from(found);
     }
 
     return extracted;
+  }
+
+  /**
+   * Whole-word keyword match. Keywords like "C++" and "C#" contain regex
+   * metacharacters and end in non-word chars, where \b boundaries fail —
+   * so we escape the keyword and use lookarounds instead.
+   */
+  static matchesKeyword(text, keyword) {
+    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`(?<![\\w+#])${escaped}(?![\\w+#])`, 'i').test(text);
   }
 
   static segmentSections(text) {
@@ -249,9 +258,8 @@ export class ResumeAnalysisService {
         const combined = `${line} ${desc}`;
         for (const keywords of Object.values(SKILL_DICTIONARY)) {
           for (const kw of keywords) {
-            const cleanKw = kw.replace(/\\\\/g, '').replace(/\\b/g, '').replace(/\\/g, '');
-            const regex = new RegExp(`\\b${cleanKw}\\b`, 'i');
-            if (regex.test(combined)) {
+            const cleanKw = kw.replace(/\\b/g, '').replace(/\\/g, '');
+            if (this.matchesKeyword(combined, cleanKw)) {
               techFound.push(cleanKw);
             }
           }
