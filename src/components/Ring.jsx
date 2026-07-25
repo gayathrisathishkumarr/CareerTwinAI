@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 export default function Ring({
   value = 0,
@@ -11,8 +11,50 @@ export default function Ring({
   suffix,
   valueColor = '#fff',
   labelColor = '#9fa3d4',
+  animate = true
 }) {
-  const pct = Math.min(100, Math.max(0, value))
+  // displayVal stays a float during the animation — rounding happens only in
+  // the rendered text. Rounding per frame makes the sweep step visibly.
+  const [displayVal, setDisplayVal] = useState(animate ? 0 : value)
+  const displayRef = useRef(animate ? 0 : value)
+
+  useEffect(() => {
+    if (!animate) {
+      displayRef.current = value
+      setDisplayVal(value)
+      return
+    }
+
+    // Animate from wherever the ring currently is, not from 0
+    const from = displayRef.current
+    const to = value
+    if (from === to) return
+
+    let startTime = null
+    const duration = 1600
+    let animFrame
+
+    const animateCount = (timestamp) => {
+      if (!startTime) startTime = timestamp
+      const progress = Math.min((timestamp - startTime) / duration, 1)
+
+      // Easing function (easeOutCubic) for smooth animation
+      const easedProgress = 1 - Math.pow(1 - progress, 3)
+
+      const current = from + (to - from) * easedProgress
+      displayRef.current = current
+      setDisplayVal(current)
+
+      if (progress < 1) {
+        animFrame = requestAnimationFrame(animateCount)
+      }
+    }
+
+    animFrame = requestAnimationFrame(animateCount)
+    return () => cancelAnimationFrame(animFrame)
+  }, [value, animate])
+
+  const pct = Math.min(100, Math.max(0, displayVal))
   const inSize = size - thickness * 2
   
   // SVG Circular progress calculations
@@ -61,7 +103,6 @@ export default function Ring({
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
-          style={{ transition: 'stroke-dashoffset 0.6s ease' }}
         />
       </svg>
 
@@ -82,7 +123,7 @@ export default function Ring({
         }}
       >
         <b style={{ fontSize: size * 0.23, color: valueColor, lineHeight: 1 }}>
-          {value}
+          {Math.round(displayVal)}
           {suffix}
         </b>
         {label && (
